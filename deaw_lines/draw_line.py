@@ -48,7 +48,7 @@ def get_single_a_t_line(num=0):
 
 
 def get_all_x_y_line():
-    fig, ax = plt.subplots()
+    fig, ax = plt.subplots(figsize=(10, 10))
 
     for title in titles:
         file = data[title]
@@ -85,7 +85,7 @@ def get_all_a_t_line():
 
 
 def get_all_v_t_line():
-    fig, ax = plt.subplots()
+    fig, ax = plt.subplots(figsize=(10, 10))
 
     for title in titles:
         file = data[title]
@@ -142,6 +142,23 @@ def get_all_image(_data):
     plt.show()
 
 
+def get_five_images():
+    sum_count = 0
+    while sum_count < len(titles):
+        count = 1
+        data_group = {}
+        while count <= 5:
+            data_group[titles[sum_count]] = data[titles[sum_count]]
+            count += 1
+            sum_count += 1
+
+            if sum_count == len(titles):
+                get_all_image(data_group)
+                return
+
+        get_all_image(data_group)
+
+
 def compare_all_images():
     pass
 
@@ -150,27 +167,10 @@ if __name__=='__main__':
     # get_single_x_y_line(0)
     # get_single_a_t_line(0)
 
-    # get_all_x_y_line()
+    get_all_x_y_line()
     # get_all_a_t_line()
     # get_all_v_t_line()
 
     # get_all_image()
-    def get_five_images():
-        sum_count = 0
-        while sum_count < len(titles):
-            count = 1
-            data_group = {}
-            while count <= 5:
-                data_group[titles[sum_count]] = data[titles[sum_count]]
-                count += 1
-                sum_count += 1
-
-                if sum_count == len(titles):
-                    get_all_image(data_group)
-                    return
-
-            get_all_image(data_group)
-
-    get_five_images()
-
+    # get_five_images()
     pass
