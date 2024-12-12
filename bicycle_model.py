@@ -22,3 +22,6 @@ class BicycleModel:
         self.psi = self.psi + self.v * math.cos(beta) / (self.f_len + self.r_len) * (math.tan(delta_f) - math.tan(delta_r)) * dt
         self.v = self.v + a * dt
 
+    # def cost_func(self):
+    #     for i in range(67):
+    #         delta =
