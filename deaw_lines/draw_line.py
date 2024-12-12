@@ -1,5 +1,6 @@
 import re
 import matplotlib.pyplot as plt
+import matplotlib.gridspec as gridspec
 
 from load_file import *
 
@@ -84,11 +85,11 @@ def get_all_a_t_line():
     plt.show()
 
 
-def get_all_v_t_line():
+def get_all_v_t_line(_data):
     fig, ax = plt.subplots(figsize=(10, 10))
 
-    for title in titles:
-        file = data[title]
+    for title in _data:
+        file = _data[title]
         print(file)
 
         time_stamps, a_values, v_values = get_time_a_v_values(file[:])
@@ -143,6 +144,7 @@ def get_all_image(_data):
 
 
 def get_five_images():
+    gs = gridspec.GridSpec(5, 2, width_ratios=[3, 3])
     sum_count = 0
     while sum_count < len(titles):
         count = 1
@@ -157,6 +159,7 @@ def get_five_images():
                 return
 
         get_all_image(data_group)
+        get_all_v_t_line(data_group)
 
 
 def compare_all_images():
@@ -167,10 +170,10 @@ if __name__=='__main__':
     # get_single_x_y_line(0)
     # get_single_a_t_line(0)
 
-    get_all_x_y_line()
+    # get_all_x_y_line()
     # get_all_a_t_line()
     # get_all_v_t_line()
 
     # get_all_image()
-    # get_five_images()
+    get_five_images()
     pass
