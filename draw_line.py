@@ -113,7 +113,7 @@ def get_all_image(_data):
             ax_list.append(ax)
 
     ax_count = 0
-    for title in titles:
+    for title in _data:
         file = _data[title]
 
         x_coordinates, y_coordinates = get_x_y_values(file[:])
@@ -155,5 +155,22 @@ if __name__=='__main__':
     # get_all_v_t_line()
 
     # get_all_image()
+    def get_five_images():
+        sum_count = 0
+        while sum_count < len(titles):
+            count = 1
+            data_group = {}
+            while count <= 5:
+                data_group[titles[sum_count]] = data[titles[sum_count]]
+                count += 1
+                sum_count += 1
+
+                if sum_count == len(titles):
+                    get_all_image(data_group)
+                    return
+
+            get_all_image(data_group)
+
+    get_five_images()
 
     pass
