@@ -22,10 +22,10 @@ def cost(theta0, theta1, data):
 
 
 # 定义模型的超参数
-alpha = 0.00001
+alpha = 0.0001
 ini_theta0 = 0
 ini_theta1 = 0
-num_iter = 1000   # 迭代次数
+num_iter = 10   # 迭代次数
 
 
 # 定义梯度下降算法
@@ -73,5 +73,5 @@ print('cost is:', cost)
 # 画出拟合曲线
 plt.scatter(x, y)
 predict_y = theta0 * x + theta1
-plt.plot(x, predict_y)
+plt.plot(x, predict_y, c='r')
 plt.show()
