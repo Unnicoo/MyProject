@@ -2,7 +2,7 @@ import re
 
 
 # file_name = 'time_x_y_a_v'
-# file_name = 'time_x_y_a_v2'
+# file_name = '-0.05===-0.55'
 file_name = '-0.1===-0.5'
 
 
@@ -17,7 +17,10 @@ def open_points_file():
                 if current_title is not None:
                     data[current_title] = current_data
 
-                current_title = line[:-1]
+                if line.endswith('：'):
+                    current_title = line[:-1]
+                else:
+                    current_title = line
                 current_data = []
             elif current_title is not None:
                 if line:
