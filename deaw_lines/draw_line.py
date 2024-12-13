@@ -100,10 +100,11 @@ def get_all_v_t_line(_data):
 
         plt.title(f'all v - t line')
 
+    ax.legend()
     plt.show()
 
 
-def get_all_image(_data):
+def get_all_image(_data: dict):
     fig = plt.figure(figsize=(10, 10))
     gs = fig.add_gridspec(5, 3)
 
@@ -156,17 +157,51 @@ def get_five_images():
 
             if sum_count == len(titles):
                 get_all_image(data_group)
+                get_all_v_t_line(data_group)
                 return
 
         get_all_image(data_group)
         get_all_v_t_line(data_group)
 
 
-def compare_all_images():
-    pass
+def get_same_start_point_images():
+    gs = gridspec.GridSpec(5, 2, width_ratios=[3, 3])
+
+    def get_ini_speed(title):
+        return title.split('~')[0]
+    start_speed = get_ini_speed(titles[0])
+    # print(start_speed)
+    data_group = {}
+    for i in range(len(titles)):
+        title = titles[i]
+        # print(len(data_group))
+        # if len(data_group) >= 5:
+        #
+        #     if len(data_group) == 10 or get_ini_speed(titles[i + 1]) != start_speed:
+        #         get_all_image(dict(list(data_group.items())[:5]))
+        #         get_all_v_t_line(dict(list(data_group.items())[:5]))
+        #         if len(data_group) > 5:
+        #             get_all_image(dict(list(data_group.items())[5:]))
+        #             get_all_v_t_line(dict(list(data_group.items())[5:]))
+        #         data_group.clear()
+        #
+        if get_ini_speed(title) == start_speed:
+            data_group[title] = data[title]
+
+            if i == len(titles) - 1:
+                get_all_image(data_group)
+                get_all_v_t_line(data_group)
+                return
+        else:
+            get_all_image(data_group)
+            get_all_v_t_line(data_group)
+            start_speed = title.split('~')[0]
+            data_group.clear()
+            data_group[title] = data[title]
+            continue
 
 
-if __name__=='__main__':
+if __name__ == '__main__':
     # get_single_x_y_line(0)
     # get_single_a_t_line(0)
 
@@ -175,5 +210,7 @@ if __name__=='__main__':
     # get_all_v_t_line()
 
     # get_all_image()
-    get_five_images()
+    # get_five_images()
+
+    get_same_start_point_images()
     pass
