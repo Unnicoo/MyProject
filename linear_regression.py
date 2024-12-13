@@ -70,6 +70,11 @@ print('theta1 is:', theta1)
 cost = cost(theta0, theta1, data)
 print('cost is:', cost)
 
+# 画出损失函数的变化
+plt.plot(cost_list)
+plt.scatter(list(range(len(cost_list))), cost_list)
+plt.show()
+
 # 画出拟合曲线
 plt.scatter(x, y)
 predict_y = theta0 * x + theta1
