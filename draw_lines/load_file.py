@@ -110,16 +110,26 @@ def calculate_a_dv_values(data: list, delta_num=5):
     return dv_values, a_values
 
 
-def select_v_t_values(data: list, min_v_value: float, max_v_value: float):
-    time_stamps, _, v_values = get_time_a_v_values(data)
-    _select_v_values = []
+def select_v_a_t_values(data: list, min_v_value: float, max_v_value: float):
+    time_stamps, a_values, v_values = get_time_a_v_values(data)
+    _selected_v_values = []
+    _selected_a_values = []
     time_values = []
     for i in range(len(time_stamps)):
         if min_v_value <= time_stamps[i] <= max_v_value:
-            _select_v_values.append(v_values[i])
+            _selected_v_values.append(v_values[i])
+            _selected_a_values.append(a_values[i])
             time_values.append(time_stamps[i])
-    assert len(_select_v_values) == len(time_values)
-    return _select_v_values, time_values
+    assert len(_selected_v_values) == len(_selected_a_values) == len(time_values)
+    return _selected_v_values, _selected_a_values, time_values
+
+
+def get_delta_v(v_values: list):
+    delta_v_values = []
+    for i in range(1, len(v_values)):
+        delta_v = v_values[i] - v_values[i-1]
+        delta_v_values.append(delta_v)
+    return delta_v_values
 
 
 if __name__ == '__main__':
