@@ -124,11 +124,12 @@ def select_v_a_t_values(data: list, min_v_value: float, max_v_value: float):
     return _selected_v_values, _selected_a_values, time_values
 
 
-def get_delta_v(v_values: list):
+def get_delta_v(target_v: float, v_values: list):
     delta_v_values = []
-    for i in range(1, len(v_values)):
-        delta_v = v_values[i] - v_values[i-1]
+    for i in range(len(v_values)):
+        delta_v = target_v - v_values[i]
         delta_v_values.append(delta_v)
+    # print(len(delta_v_values))
     return delta_v_values
 
 
