@@ -1,13 +1,20 @@
+import os
 import re
+from pathlib import Path
 
+
+cur_dir = Path(__file__).parent
+# print(cur_dir)
 
 # file_name = 'time_x_y_a_v'
 # file_name = '-0.05===-0.55'
-file_name = '-0.1===-0.5'
+file_name = 'data/-0.1===-0.5'
+
+file_path = cur_dir / file_name
 
 
 def open_points_file():
-    with open(file_name, 'r', encoding='utf-8') as f:
+    with open(file_path, 'r', encoding='utf-8') as f:
         data = {}
         current_title = None
         for line in f:
@@ -33,8 +40,8 @@ def open_points_file():
 
 
 data = open_points_file()
-# print(data)
-# print(len(data))
+print(data)
+print(len(data))
 
 
 for info in data.values():
