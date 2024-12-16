@@ -52,7 +52,7 @@ def get_all_x_y_line():
 
     for title in titles:
         file = data[title]
-        print(file)
+        # print(file)
 
         x_coordinates, y_coordinates = get_x_y_values(file[:])
         ax.scatter(x_coordinates, y_coordinates, label=title)
@@ -71,7 +71,7 @@ def get_all_a_t_line():
 
     for title in titles:
         file = data[title]
-        print(file)
+        # print(file)
 
         time_stamps, a_values, v_values = get_time_a_v_values(file[:])
         ax.plot(time_stamps, a_values, label=title)
@@ -89,7 +89,7 @@ def get_all_v_t_line(_data):
 
     for title in _data:
         file = _data[title]
-        print(file)
+        # print(file)
 
         time_stamps, a_values, v_values = get_time_a_v_values(file[:])
         ax.scatter(time_stamps, v_values, label=title)
@@ -126,7 +126,7 @@ def get_all_image(_data: dict):
 
         time_stamps, a_values, v_values = get_time_a_v_values(file[:])
         # print(time_stamps)
-        print(a_values)
+        # print(a_values)
         ax_list[ax_count].scatter(time_stamps, a_values, label=title)
         ax_list[ax_count].set_xlabel('t')
         ax_list[ax_count].set_ylabel('a')
@@ -164,26 +164,14 @@ def get_five_images():
 
 
 def get_same_start_point_images():
-    gs = gridspec.GridSpec(5, 2, width_ratios=[3, 3])
+    def get_ini_speed(_title):
+        return _title.split('~')[0]
 
-    def get_ini_speed(title):
-        return title.split('~')[0]
     start_speed = get_ini_speed(titles[0])
     # print(start_speed)
     data_group = {}
     for i in range(len(titles)):
         title = titles[i]
-        # print(len(data_group))
-        # if len(data_group) >= 5:
-        #
-        #     if len(data_group) == 10 or get_ini_speed(titles[i + 1]) != start_speed:
-        #         get_all_image(dict(list(data_group.items())[:5]))
-        #         get_all_v_t_line(dict(list(data_group.items())[:5]))
-        #         if len(data_group) > 5:
-        #             get_all_image(dict(list(data_group.items())[5:]))
-        #             get_all_v_t_line(dict(list(data_group.items())[5:]))
-        #         data_group.clear()
-        #
         if get_ini_speed(title) == start_speed:
             data_group[title] = data[title]
 
@@ -213,7 +201,7 @@ if __name__ == '__main__':
 
     # get_same_start_point_images()
 
-    a = calculate_a_dv_values(data[titles[0]])
+    # a = calculate_a_dv_values(data[titles[0]])
     # plt.plot(a)
     # plt.show()
 
