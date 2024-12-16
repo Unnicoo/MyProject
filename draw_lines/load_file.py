@@ -1,5 +1,6 @@
 import os
 import re
+from typing import List
 from pathlib import Path
 
 
@@ -40,8 +41,9 @@ def open_points_file():
 
 
 data = open_points_file()
-print(data)
-print(len(data))
+titles = [x for x in data]
+# print(data)
+# print(len(data))
 
 
 for info in data.values():
@@ -69,13 +71,57 @@ def get_x_y_values(data_name):
     return x_coordinates, y_coordinates
 
 
-def get_time_a_v_values(data_name):
+def get_time_a_v_values(data_name: List[dict]):
     time_stamps = []
     a_values = []
     v_values = []
-    for i in range(len(data_name)):
-        time_stamps.append(data_name[i]['timestamp'] - data_name[0]['timestamp'])
-        a_values.append(data_name[i]['a'])
-        v_values.append(data_name[i]['v'])
 
+    def __get_relative_time(index):
+        # 获取相对第一帧的时间
+        return data_name[index]['timestamp'] - data_name[0]['timestamp']
+
+    def __get_v(index):
+        return data_name[index]['v']
+
+    for i in range(5, len(data_name)-5):
+        # 得到相对第一帧的时间
+        relative_time = __get_relative_time(i)
+        time_stamps.append(relative_time)
+
+        # 取前后5帧的时间计算当前点的加速度
+        a = (__get_v(i+5) - __get_v(i-5)) / (__get_relative_time(i+5) - __get_relative_time(i-5))
+        a_values.append(a)
+
+        # 得到当前点的速度
+        v_values.append(__get_v(i))
     return time_stamps, a_values, v_values
+
+
+def calculate_a_dv_values(data: list, delta_num=5):
+    time_stamp, _, v_values = get_time_a_v_values(data)
+    assert len(time_stamp) == len(v_values), '时间和速度的个数不等'
+    dv_values = []
+    a_values = []
+    for i in range(delta_num, len(v_values)-5):
+        dv = v_values[i] - v_values[i-delta_num]
+        da = (v_values[i] - v_values[i-delta_num]) / (time_stamp[i+delta_num] - time_stamp[i-delta_num])
+        dv_values.append(dv)
+        a_values.append(da)
+    return dv_values, a_values
+
+
+def select_v_t_values(data: list, min_v_value: float, max_v_value: float):
+    time_stamps, _, v_values = get_time_a_v_values(data)
+    _select_v_values = []
+    time_values = []
+    for i in range(len(time_stamps)):
+        if min_v_value <= time_stamps[i] <= max_v_value:
+            _select_v_values.append(v_values[i])
+            time_values.append(time_stamps[i])
+    assert len(_select_v_values) == len(time_values)
+    return _select_v_values, time_values
+
+
+if __name__ == '__main__':
+    # print(get_time_a_v_values(data[titles[0]]))
+    pass

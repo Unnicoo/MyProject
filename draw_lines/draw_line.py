@@ -2,9 +2,8 @@ import re
 import matplotlib.pyplot as plt
 import matplotlib.gridspec as gridspec
 
-from load_file import *
+from draw_lines.load_file import *
 
-titles = [x for x in data]
 data_len = len(titles)
 # print(titles)
 
@@ -212,5 +211,10 @@ if __name__ == '__main__':
     # get_all_image()
     # get_five_images()
 
-    get_same_start_point_images()
+    # get_same_start_point_images()
+
+    a = calculate_a_dv_values(data[titles[0]])
+    # plt.plot(a)
+    # plt.show()
+
     pass
