@@ -83,13 +83,13 @@ def get_time_a_v_values(data_name: List[dict]):
     def __get_v(index):
         return data_name[index]['v']
 
-    for i in range(5, len(data_name)-5):
+    for i in range(2, len(data_name)-2):
         # 得到相对第一帧的时间
         relative_time = __get_relative_time(i)
         time_stamps.append(relative_time)
 
         # 取前后5帧的时间计算当前点的加速度
-        a = (__get_v(i+5) - __get_v(i-5)) / (__get_relative_time(i+5) - __get_relative_time(i-5))
+        a = (__get_v(i+2) - __get_v(i-2)) / (__get_relative_time(i+2) - __get_relative_time(i-2))
         a_values.append(a)
 
         # 得到当前点的速度
@@ -131,6 +131,10 @@ def get_delta_v(target_v: float, v_values: list):
         delta_v_values.append(delta_v)
     # print(len(delta_v_values))
     return delta_v_values
+
+
+def get_target_v(title: str):
+    return abs(float(title.strip().split('~')[1]))
 
 
 if __name__ == '__main__':
