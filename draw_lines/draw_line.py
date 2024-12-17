@@ -194,7 +194,7 @@ if __name__ == '__main__':
 
     # get_all_x_y_line()
     # get_all_a_t_line()
-    get_all_v_t_line(data)
+    # get_all_v_t_line(data)
 
     # get_all_image()
     # get_five_images()
