@@ -1,7 +1,8 @@
 import matplotlib.pyplot as plt
 
 from draw_lines.load_file import *
-from data.accelerating_part_t_values import *
+# from data.accelerating_part_t_values import *
+from data.constant_accelerating_part_t_values import *
 
 
 def draw_v_t_image(t_values, v_values, title):
@@ -53,7 +54,7 @@ def draw_accelerating_part_on_origin(title, t_values, v_values, time_values, sel
 
 
 if __name__=='__main__':
-    index_minV_maxV = index_minV_maxV_2
+    index_minV_maxV = index_minV_maxV_3
     for i in range(len(index_minV_maxV)):
         title = titles[index_minV_maxV[i][0]]
         file = data[title]
