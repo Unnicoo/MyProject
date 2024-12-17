@@ -44,7 +44,7 @@ data = open_points_file()
 titles = [x for x in data]
 # print(data)
 # print(len(data))
-print(titles)
+# print(titles)
 
 
 for info in data.values():
