@@ -9,9 +9,9 @@ cur_dir = Path(__file__).parent
 
 # file_name = 'time_x_y_a_v'
 # file_name = '-0.05===-0.55'
-file_name = 'data/-0.1===-0.5'
+file_name = '-0.1===-0.5'
 
-file_path = cur_dir / file_name
+file_path = cur_dir / 'data' / file_name
 
 
 def open_points_file():
@@ -44,6 +44,7 @@ data = open_points_file()
 titles = [x for x in data]
 # print(data)
 # print(len(data))
+print(titles)
 
 
 for info in data.values():
@@ -83,13 +84,14 @@ def get_time_a_v_values(data_name: List[dict]):
     def __get_v(index):
         return data_name[index]['v']
 
-    for i in range(2, len(data_name)-2):
+    delta_num = 5
+    for i in range(delta_num, len(data_name)-delta_num):
         # 得到相对第一帧的时间
         relative_time = __get_relative_time(i)
         time_stamps.append(relative_time)
 
         # 取前后5帧的时间计算当前点的加速度
-        a = (__get_v(i+2) - __get_v(i-2)) / (__get_relative_time(i+2) - __get_relative_time(i-2))
+        a = (__get_v(i+delta_num) - __get_v(i-delta_num)) / (__get_relative_time(i+delta_num) - __get_relative_time(i-delta_num))
         a_values.append(a)
 
         # 得到当前点的速度
@@ -133,8 +135,20 @@ def get_delta_v(target_v: float, v_values: list):
     return delta_v_values
 
 
+def get_initial_v(title: str):
+    return abs(float(title.strip().split('~')[0]))
+
+
 def get_target_v(title: str):
     return abs(float(title.strip().split('~')[1]))
+
+
+def get_same_delta_data(_data: dict, delta):
+    appointed_data = {}
+    for title in _data:
+        if round(get_target_v(title) - get_initial_v(title), 2) == delta:
+            appointed_data[title] = _data[title]
+    return appointed_data
 
 
 if __name__ == '__main__':

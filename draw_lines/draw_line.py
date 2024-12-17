@@ -143,18 +143,18 @@ def get_all_image(_data: dict):
     plt.show()
 
 
-def get_five_images():
+def get_five_images(_data: dict = data, _titles: List[str] = titles):
     gs = gridspec.GridSpec(5, 2, width_ratios=[3, 3])
     sum_count = 0
-    while sum_count < len(titles):
+    while sum_count < len(_titles):
         count = 1
         data_group = {}
         while count <= 5:
-            data_group[titles[sum_count]] = data[titles[sum_count]]
+            data_group[_titles[sum_count]] = _data[_titles[sum_count]]
             count += 1
             sum_count += 1
 
-            if sum_count == len(titles):
+            if sum_count == len(_titles):
                 get_all_image(data_group)
                 get_all_v_t_line(data_group)
                 return
@@ -194,7 +194,7 @@ if __name__ == '__main__':
 
     # get_all_x_y_line()
     # get_all_a_t_line()
-    # get_all_v_t_line()
+    get_all_v_t_line(data)
 
     # get_all_image()
     # get_five_images()
@@ -205,4 +205,6 @@ if __name__ == '__main__':
     # plt.plot(a)
     # plt.show()
 
+    # _data = get_same_delta_data(data, 0.4)
+    # get_five_images(_data, [x for x in _data])
     pass
