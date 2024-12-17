@@ -9,6 +9,11 @@ data_len = len(titles)
 
 
 def get_single_x_y_line(num=0):
+    """
+        单独画一条x-y线
+    :param num:
+    :return:
+    """
     title = titles[num]
     file = data[title]
     # print(file)
@@ -32,6 +37,11 @@ def get_single_x_y_line(num=0):
 
 
 def get_single_a_t_line(num=0):
+    """
+        单独画一条a-t线
+    :param num:
+    :return:
+    """
     title = titles[num]
     file = data[title]
 
@@ -48,6 +58,10 @@ def get_single_a_t_line(num=0):
 
 
 def get_all_x_y_line():
+    """
+        画出所有x-y线
+    :return:
+    """
     fig, ax = plt.subplots(figsize=(10, 10))
 
     for title in titles:
@@ -66,6 +80,10 @@ def get_all_x_y_line():
 
 
 def get_all_a_t_line():
+    """
+        画出所有a-t线
+    :return:
+    """
     plt.figure(figsize=(10, 10))
     fig, ax = plt.subplots()
 
@@ -84,7 +102,12 @@ def get_all_a_t_line():
     plt.show()
 
 
-def get_all_v_t_line(_data):
+def get_all_v_t_line(_data: dict):
+    """
+        画出所有v-t线
+    :param _data: 包含几组不同速度的数据，格式大致为{'0.1-0.2': [..], '0.1-0.3': [..]}
+    :return:
+    """
     fig, ax = plt.subplots(figsize=(10, 10))
 
     for title in _data:
@@ -104,6 +127,11 @@ def get_all_v_t_line(_data):
 
 
 def get_all_image(_data: dict):
+    """
+        画出所有x-y、a-t、v-t图
+    :param _data: 包含几组不同速度的数据，格式大致为{'0.1-0.2': [..], '0.1-0.3': [..]}
+    :return:
+    """
     fig = plt.figure(figsize=(10, 10))
     gs = fig.add_gridspec(5, 3)
 
@@ -144,6 +172,12 @@ def get_all_image(_data: dict):
 
 
 def get_five_images(_data: dict = data, _titles: List[str] = titles):
+    """
+        每五组生成三个x-y、a-t、v-t图，以及对应的放在一张图上的5个v-t图
+    :param _data: 包含几组不同速度的数据，格式大致为{'0.1-0.2': [..], '0.1-0.3': [..]}
+    :param _titles: 列表，里面有描述速度的字符串，也就是_data的key组成的列表
+    :return:
+    """
     gs = gridspec.GridSpec(5, 2, width_ratios=[3, 3])
     sum_count = 0
     while sum_count < len(_titles):
@@ -163,7 +197,11 @@ def get_five_images(_data: dict = data, _titles: List[str] = titles):
         get_all_v_t_line(data_group)
 
 
-def get_same_start_point_images():
+def get_same_start_v_images():
+    """
+        获取相同初始速度的各组数据的v-t图
+    :return:
+    """
     def get_ini_speed(_title):
         return _title.split('~')[0]
 
@@ -199,12 +237,10 @@ if __name__ == '__main__':
     # get_all_image()
     # get_five_images()
 
-    # get_same_start_point_images()
+    # get_same_start_v_images()
 
-    # a = calculate_a_dv_values(data[titles[0]])
-    # plt.plot(a)
-    # plt.show()
-
+    # 调整delta的数值以获取速度差为delta的v-t图组
     # _data = get_same_delta_data(data, 0.4)
     # get_five_images(_data, [x for x in _data])
+
     pass

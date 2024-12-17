@@ -7,14 +7,24 @@ from pathlib import Path
 cur_dir = Path(__file__).parent
 # print(cur_dir)
 
+# 在这里更改注掉哪行，可以读取不同的数据
+# 5个前进数据
 # file_name = 'time_x_y_a_v'
+
+# 15个前进数据
 # file_name = '0.05===0.55'
+
+# 25个倒车数据
 file_name = '-0.1===-0.5'
 
 file_path = cur_dir / 'data' / file_name
 
 
 def open_points_file():
+    """
+        读取文件
+    :return: data的格式为{'0.1-0.2': [], ...}
+    """
     with open(file_path, 'r', encoding='utf-8') as f:
         data = {}
         current_title = None
@@ -61,8 +71,16 @@ for info in data.values():
 
         info[i] = data_dict     # noqa
 
+# 这里得到的文件的格式：data = {'v1-v2': [{'timestamp': t1, 'x': x1, 'y': y1, 'a': a1, 'v': v1}, {第二帧信息}...], {'v2-v3'}: [...]}
+# print(data)
 
-def get_x_y_values(data_name):
+
+def get_x_y_values(data_name: List[dict]):
+    """
+        取出所有某速度范围下所有的x、y点
+    :param data_name: 相当于data[title]，也就是上面的[{'timestamp': t1, 'x': x1, 'y': y1, 'a': a1, 'v': v1}, {第二帧信息}...]
+    :return: x坐标的列表， y坐标的列表
+    """
     x_coordinates = []
     y_coordinates = []
     for i in range(len(data_name)):
@@ -73,6 +91,11 @@ def get_x_y_values(data_name):
 
 
 def get_time_a_v_values(data_name: List[dict]):
+    """
+        得到所有的t、a、v值
+    :param data_name: 相当于data[title]，也就是上面的[{'timestamp': t1, 'x': x1, 'y': y1, 'a': a1, 'v': v1}, {第二帧信息}...]
+    :return: t坐标的列表， a坐标的列表，v坐标的列表
+    """
     time_stamps = []
     a_values = []
     v_values = []
@@ -100,6 +123,9 @@ def get_time_a_v_values(data_name: List[dict]):
 
 
 def calculate_a_dv_values(data: list, delta_num=5):
+    """
+        用不到
+    """
     time_stamp, _, v_values = get_time_a_v_values(data)
     assert len(time_stamp) == len(v_values), '时间和速度的个数不等'
     dv_values = []
@@ -112,13 +138,20 @@ def calculate_a_dv_values(data: list, delta_num=5):
     return dv_values, a_values
 
 
-def select_v_a_t_values(data: list, min_v_value: float, max_v_value: float):
+def select_v_a_t_values(data: List[dict], min_t_value: float, max_t_value: float):
+    """
+        获取指定的时间范围内的v、a、t列表
+    :param data: 相当于data[title]，也就是上面的[{'timestamp': t1, 'x': x1, 'y': y1, 'a': a1, 'v': v1}, {第二帧信息}...]
+    :param min_t_value: 最小的 t值
+    :param max_t_value: 最大的 t值
+    :return: t坐标的列表， a坐标的列表，v坐标的列表
+    """
     time_stamps, a_values, v_values = get_time_a_v_values(data)
     _selected_v_values = []
     _selected_a_values = []
     time_values = []
     for i in range(len(time_stamps)):
-        if min_v_value <= time_stamps[i] <= max_v_value:
+        if min_t_value <= time_stamps[i] <= max_t_value:
             _selected_v_values.append(v_values[i])
             _selected_a_values.append(a_values[i])
             time_values.append(time_stamps[i])
@@ -127,6 +160,12 @@ def select_v_a_t_values(data: list, min_v_value: float, max_v_value: float):
 
 
 def get_delta_v(target_v: float, v_values: list):
+    """
+        获取delta_v，也就是目标速度减去当前速度
+    :param target_v: 目标速度
+    :param v_values: 房前速度
+    :return: 包含所有delta_v的列表
+    """
     delta_v_values = []
     for i in range(len(v_values)):
         delta_v = target_v - v_values[i]
@@ -136,14 +175,27 @@ def get_delta_v(target_v: float, v_values: list):
 
 
 def get_initial_v(title: str):
+    """
+        获取初始速度
+    :param title: 形如'0.1 ~ 0.2'的字符串
+    :return: 初始速度
+    """
     return abs(float(title.strip().split('~')[0]))
 
 
 def get_target_v(title: str):
+    """
+        获取目标速度
+    :param title: 形如'0.1 ~ 0.2'的字符串
+    :return: 目标速度
+    """
     return abs(float(title.strip().split('~')[1]))
 
 
 def get_same_delta_data(_data: dict, delta):
+    """
+        用不到
+    """
     appointed_data = {}
     for title in _data:
         if round(get_target_v(title) - get_initial_v(title), 2) == delta:
