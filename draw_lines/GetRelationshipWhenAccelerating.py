@@ -52,7 +52,7 @@ def draw_five_a_delta_v_images(_data: dict[List[dict]], index_minV_maxV: List[Li
     while count < len(_data):
         fig, ax = plt.subplots(figsize=(10, 10))
 
-        for _ in range(7):
+        for _ in range(5):
             title = titles[index_minV_maxV[count][0]]
             target_v = abs(float(title.strip().split('~')[1]))
             selected_v_values, selected_a_values, _ = select_v_a_t_values(_data[title], index_minV_maxV[count][1], index_minV_maxV[count][2])
@@ -79,6 +79,17 @@ def draw_same_delv_a_delta_v_images_by_5(_data: dict[List[dict]], index_minV_max
         index = titles.index(title)
         _index_minV_maxV.append(index_minV_maxV[index])
     draw_five_a_delta_v_images(data, _index_minV_maxV)
+
+
+def get_same_iniv_a_delta_v_images_by_5(_data: dict[List[dict]], index_minV_maxV: List[List], ini_speed):
+    appointed_data = {}
+    _index_minV_maxV = []
+    for title in _data:
+        if get_initial_v(title) == ini_speed:
+            index = titles.index(title)
+            appointed_data[title] = _data[title]
+            _index_minV_maxV.append(index_minV_maxV[index])
+    draw_five_a_delta_v_images(appointed_data, _index_minV_maxV)
 
 
 def draw_accelerating_part_on_origin(title, t_values, v_values, time_values, selected_v_values):
@@ -134,6 +145,9 @@ if __name__=='__main__':
     # draw_five_a_delta_v_images(data, index_minV_maxV)
 
     # 把速度差相等的a-delta_v图画在一起，可以调整delta来更改速度差
-    draw_same_delv_a_delta_v_images_by_5(data, index_minV_maxV, 0.2)
+    # draw_same_delv_a_delta_v_images_by_5(data, index_minV_maxV, 0.2)
+
+    # 把初速度相等的a-delta_v图画在一起，可以调整delta来更改初速度值
+    get_same_iniv_a_delta_v_images_by_5(data, index_minV_maxV, 0.1)
     pass
 
