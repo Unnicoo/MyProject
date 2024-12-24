@@ -7,15 +7,17 @@ from pathlib import Path
 cur_dir = Path(__file__).parent
 # print(cur_dir)
 
-# 在这里更改注掉哪行，可以读取不同的数据
-# 5个前进数据
-# file_name = 'time_x_y_a_v'
+file_names = [
+    'time_x_y_a_v',     # index:0, 5个前进数据
+    '0.05===0.55',      # index:1, 15个前进数据
+    '-0.1===-0.5',      # index:2, 25个倒车数据
+    '0.1到0.5正向两组',   # index:3
+    '0.05~0.55正向两组',  # index:4
+    '-0.1到-0.5倒车',     # index:5
+    '-0.05到-0.55倒车'    # index:6
+]
 
-# 15个前进数据
-# file_name = '0.05===0.55'
-
-# 25个倒车数据
-file_name = '-0.1===-0.5'
+file_name = file_names[6]
 
 file_path = cur_dir / 'data' / file_name
 
@@ -189,6 +191,8 @@ def get_target_v(title: str):
     :param title: 形如'0.1 ~ 0.2'的字符串
     :return: 目标速度
     """
+    if ' ' in title:
+        title = title.split(' ')[0]
     return abs(float(title.strip().split('~')[1]))
 
 

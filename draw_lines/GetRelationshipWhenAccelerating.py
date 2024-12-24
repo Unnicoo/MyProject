@@ -54,7 +54,7 @@ def draw_five_a_delta_v_images(_data: dict[List[dict]], index_minV_maxV: List[Li
 
         for _ in range(5):
             title = titles[index_minV_maxV[count][0]]
-            target_v = abs(float(title.strip().split('~')[1]))
+            target_v = get_target_v(title)
             selected_v_values, selected_a_values, _ = select_v_a_t_values(_data[title], index_minV_maxV[count][1], index_minV_maxV[count][2])
             delta_v_values = get_delta_v(float(target_v), selected_v_values)
 
@@ -77,6 +77,7 @@ def draw_same_delv_a_delta_v_images_by_5(_data: dict[List[dict]], index_minV_max
     _index_minV_maxV = []
     for title in data:
         index = titles.index(title)
+        print(index)
         _index_minV_maxV.append(index_minV_maxV[index])
     draw_five_a_delta_v_images(data, _index_minV_maxV)
 
@@ -119,7 +120,7 @@ if __name__=='__main__':
         t_values, a_values, v_values = get_time_a_v_values(file)
         selected_v_values, selected_a_values, time_values = select_v_a_t_values(file, index_minV_maxV[i][1],
                                                                                 index_minV_maxV[i][2])
-        target_v = abs(float(title.strip().split('~')[1]))
+        target_v = get_target_v(title)
         delta_v_values = get_delta_v(float(target_v), selected_v_values)
         _data = get_same_delta_data(data, 0.1)
 
