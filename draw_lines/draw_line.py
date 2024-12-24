@@ -49,11 +49,32 @@ def get_single_a_t_line(num=0):
 
     plt.figure()
 
-    plt.plot(time_stamps, a_values, color = 'blue', linestyle='-', marker='o')
+    plt.plot(time_stamps, a_values, color='blue', linestyle='-', marker='o')
     plt.xlabel('x')
     plt.ylabel('y')
 
-    plt.title(f'part {title}, y - x line')
+    plt.title(f'part {title}, a - t line')
+    plt.show()
+
+
+def get_single_v_t_line(num=0):
+    """
+        单独画一条a-t线
+    :param num:
+    :return:
+    """
+    title = titles[num]
+    file = data[title]
+
+    time_stamps, a_values, v_values = get_time_a_v_values(file[:])
+
+    plt.figure()
+
+    plt.plot(time_stamps, v_values, color='blue', linestyle='-', marker='o')
+    plt.xlabel('x')
+    plt.ylabel('y')
+
+    plt.title(f'part {title}, v - t line')
     plt.show()
 
 
@@ -227,8 +248,10 @@ def get_same_start_v_images():
 
 
 if __name__ == '__main__':
-    # get_single_x_y_line(0)
-    # get_single_a_t_line(0)
+    for i in range(len(titles)):
+        # get_single_x_y_line(i)
+        # get_single_a_t_line(i)
+        get_single_v_t_line(i)
 
     # get_all_x_y_line()
     # get_all_a_t_line()
