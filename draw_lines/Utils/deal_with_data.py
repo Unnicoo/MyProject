@@ -53,22 +53,6 @@ class DataProcessing:
         return time_stamps, v_values, a_values
 
     @ staticmethod
-    def calculate_a_dv_values(data: list, delta_num=5):
-        """
-            用不到
-        """
-        time_stamp, v_values, _ = DataProcessing.get_t_v_a_values(data)
-        assert len(time_stamp) == len(v_values), '时间和速度的个数不等'
-        dv_values = []
-        a_values = []
-        for i in range(delta_num, len(v_values)-5):
-            dv = v_values[i] - v_values[i-delta_num]
-            da = (v_values[i] - v_values[i-delta_num]) / (time_stamp[i+delta_num] - time_stamp[i-delta_num])
-            dv_values.append(dv)
-            a_values.append(da)
-        return dv_values, a_values
-
-    @ staticmethod
     def select_t_v_a_values(data: List[dict], min_t_value: float, max_t_value: float):
         """
             获取指定的时间范围内的v、a、t列表
