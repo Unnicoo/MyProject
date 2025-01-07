@@ -111,7 +111,7 @@ if __name__=='__main__':
     # index_minV_maxV_3 表示第三份数据，也就是25个倒车数据
     # 注意：需要配合load_file文件中读取的文件内容，也就是说load_file中读取的第一个文件，那这里就改成index_minV_maxV_1
 
-    index_minV_maxV = index_minV_maxV_3
+    index_minV_maxV = index_minV_maxV_6
 
     # 这部分会自动处理数据，不用管，只需要更改下面执行哪些函数
     for i in range(len(index_minV_maxV)):
