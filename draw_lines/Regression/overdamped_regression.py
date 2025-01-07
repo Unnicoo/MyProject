@@ -1,11 +1,13 @@
 import numpy as np
 from scipy.optimize import curve_fit
+
+from draw_lines.Utils.deal_with_data import DataProcessing
 from draw_lines.load_file import *
-from draw_lines.data.accelerating_part_t_values import *
 from pylab import mpl
 
-
 mpl.rcParams['font.sans-serif'] = ['MicroSoft YaHei']
+data = data_utils.data
+titles = data_utils.titles
 
 
 def overdamped_second_order(t, omega_n, zeta):
@@ -48,14 +50,11 @@ def overdamped_second_order(t, omega_n, zeta):
 
 
 def fit_overdamped_second_order(t_data, v_data, ini_omega_n=1.0, ini_zeta=1.0):
-    # 初始参数估计值
     initial_guess = [ini_omega_n, ini_zeta]  # [omega_n, zeta]
 
-    # 设置参数的上下界
     # bounds = ([0.1, 1.01], [10.0, 10.0])  # [omega_n_min, zeta_min], [omega_n_max, zeta_max]
-    bounds = ([2.0, 1.0], [10.0, 20.0])  # [omega_n_min, zeta_min], [omega_n_max, zeta_max]
+    bounds = ([1.0, 1.0], [10.0, 20.0])  # [omega_n_min, zeta_min], [omega_n_max, zeta_max]
 
-    # 使用 curve_fit 进行拟合，带边界条件
     try:
         params, covariance = curve_fit(overdamped_second_order, t_data, v_data, p0=initial_guess, bounds=bounds)    # noqa
         omega_n_fit, zeta_fit = params
@@ -64,11 +63,9 @@ def fit_overdamped_second_order(t_data, v_data, ini_omega_n=1.0, ini_zeta=1.0):
     except RuntimeError as e:
         print(f"拟合失败: {e}")
 
-    # 生成拟合曲线
     t_fit = np.linspace(min(t_data), max(t_data), 100)
     y_fit = overdamped_second_order(t_fit, omega_n_fit, zeta_fit)       # noqa
 
-    # 绘制原始数据和拟合曲线
     import matplotlib.pyplot as plt
 
     plt.plot(t_data, v_data, 'bo', label='原始数据')
@@ -81,23 +78,22 @@ def fit_overdamped_second_order(t_data, v_data, ini_omega_n=1.0, ini_zeta=1.0):
 
 
 if __name__ == '__main__':
-    index_minV_maxV = index_minV_maxV_6
+    acc_t_ranges = data_utils.acc_t_ranges
 
-    for i in range(len(index_minV_maxV)):
-        title = titles[index_minV_maxV[i][0]]
+    for i in range(len(acc_t_ranges)):
+        title = titles[acc_t_ranges[i][0]]
         file = data[title]
-        ini_v = get_initial_v(title)
-        tar_v = get_target_v(title)
+        ini_v = DataProcessing.get_initial_v(title)
+        tar_v = DataProcessing.get_target_v(title)
         diff_v = round(tar_v - ini_v, 1)
         print(f'\n目标速度减去初始速度的差值为{diff_v}')
-        # time_values, selected_a_values, selected_v_values,  = get_time_a_v_values(file)
-        selected_v_values, selected_a_values, time_values = select_v_a_t_values(file, index_minV_maxV[i][1],
-                                                                                index_minV_maxV[i][2])
+        # time_values, selected_v_values, _ = DataProcessing.get_t_v_a_values(file)
+        t_values, v_values, _ = DataProcessing.select_t_v_a_values(file, acc_t_ranges[i][1], acc_t_ranges[i][2])
 
-        target_v = get_target_v(title)
+        target_v = DataProcessing.get_target_v(title)
 
-        t_data = np.array(time_values)
-        v_data = np.array(selected_v_values)
+        t_data = np.array(t_values)
+        v_data = np.array(v_values)
 
         t_data = t_data - t_data[0]
         t_data = t_data * 1e-3
