@@ -10,28 +10,25 @@ data = data_utils.data
 titles = data_utils.titles
 
 
-def overdamped_second_order(t, omega_n, zeta):
+def overdamped_second_order(t: np.array, omega_n: float, zeta: float):
     """
     计算过阻尼二阶系统的响应。
 
     参数:
-    t (float or array-like): 时间向量
-    omega_n (float): 自然频率
-    zeta (float): 阻尼比 (zeta > 1 表示过阻尼)
+    t : 时间向量
+    omega_n: 自然频率
+    zeta: 阻尼比 (zeta > 1 表示过阻尼)
 
     返回:
-    float or array-like: 系统的响应
+    np.array: 系统响应
     """
 
-    # 输入验证
     if zeta <= 1:
         raise ValueError("阻尼比 zeta 应大于 1，表示过阻尼系统。")
 
-    # 计算 sigma 和 sqrt_part
     sigma = zeta * omega_n
     sqrt_part = np.sqrt(sigma ** 2 - omega_n ** 2)
 
-    # 计算 A1 和 A2
     A1 = (sigma + sqrt_part) / (2 * sqrt_part)
     A2 = -(sigma - sqrt_part) / (2 * sqrt_part)
 
@@ -39,11 +36,9 @@ def overdamped_second_order(t, omega_n, zeta):
     if np.isclose(sqrt_part, 0.0):
         return 1 - np.exp(-sigma * t) * (1 + sigma * t)
 
-    # 使用 expm1 来提高数值稳定性
     term1 = A1 * np.exp((sqrt_part - sigma) * t)
     term2 = A2 * np.exp(-(sqrt_part + sigma) * t)
 
-    # 避免直接计算大指数
     response = 1 - np.exp(-sigma * t) * (term1 + term2)
 
     return response

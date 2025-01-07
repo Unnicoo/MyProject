@@ -48,15 +48,15 @@ def draw_a_delta_v_image(delta_v_values, selected_a_values, title):
     plt.show()
 
 
-def draw_five_a_delta_v_images(_data: dict[List[dict]], index_minV_maxV: List[List]):
+def draw_five_a_delta_v_images(_data: dict[List[dict]], acc_t_ranges: List[List]):
     count = 0
     while count < len(_data):
         fig, ax = plt.subplots(figsize=(10, 10))
 
         for _ in range(5):
-            title = titles[index_minV_maxV[count][0]]
+            title = titles[acc_t_ranges[count][0]]
             target_v = DataProcessing.get_target_v(title)
-            _, selected_v_values, selected_a_values = DataProcessing.select_t_v_a_values(_data[title], index_minV_maxV[count][1], index_minV_maxV[count][2])
+            _, selected_v_values, selected_a_values = DataProcessing.select_t_v_a_values(_data[title], acc_t_ranges[count][1], acc_t_ranges[count][2])
             delta_v_values = DataProcessing.get_delta_v(float(target_v), selected_v_values)
 
             ax.plot(delta_v_values, selected_a_values, label=f'{title}')
@@ -72,26 +72,26 @@ def draw_five_a_delta_v_images(_data: dict[List[dict]], index_minV_maxV: List[Li
         plt.show()
 
 
-def draw_same_delv_a_delta_v_images_by_5(_data: dict[List[dict]], index_minV_maxV: List[List], delta):
+def draw_same_delv_a_delta_v_images_by_5(_data: dict[List[dict]], acc_t_ranges: List[List], delta):
     data = DataProcessing.get_same_delta_data(_data, delta)
     # data.pop('-0.15~-0.35')
-    _index_minV_maxV = []
+    _acc_t_ranges = []
     for title in data:
         index = titles.index(title)
         print(index)
-        _index_minV_maxV.append(index_minV_maxV[index])
-    draw_five_a_delta_v_images(data, _index_minV_maxV)
+        _acc_t_ranges.append(acc_t_ranges[index])
+    draw_five_a_delta_v_images(data, _acc_t_ranges)
 
 
-def get_same_iniv_a_delta_v_images_by_5(_data: dict[List[dict]], index_minV_maxV: List[List], ini_speed):
+def get_same_iniv_a_delta_v_images_by_5(_data: dict[List[dict]], acc_t_ranges: List[List], ini_speed):
     appointed_data = {}
-    _index_minV_maxV = []
+    _acc_t_ranges = []
     for title in _data:
         if DataProcessing.get_initial_v(title) == ini_speed:
             index = titles.index(title)
             appointed_data[title] = _data[title]
-            _index_minV_maxV.append(index_minV_maxV[index])
-    draw_five_a_delta_v_images(appointed_data, _index_minV_maxV)
+            _acc_t_ranges.append(acc_t_ranges[index])
+    draw_five_a_delta_v_images(appointed_data, _acc_t_ranges)
 
 
 def draw_accelerating_part_on_origin(title, t_values, v_values, time_values, selected_v_values):
@@ -125,10 +125,10 @@ if __name__=='__main__':
         # draw_v_t_image(t_values, v_values, title)
 
         # 画出经过时间限制的vt图，也就是说你只能看到加速部分的vt图像
-        # draw_v_t_image(time_values, selected_v_values, title)
+        # draw_v_t_image(selected_t_values, selected_v_values, title)
 
         # 画出加速部分在全部过程中的部分的vt图
-        # draw_accelerating_part_on_origin(title, t_values, v_values, time_values, selected_v_values)
+        # draw_accelerating_part_on_origin(title, t_values, v_values, selected_t_values, selected_v_values)
 
         # 画出全部过程中的at图
         # draw_a_t_image(t_values, a_values, title)
@@ -140,10 +140,10 @@ if __name__=='__main__':
         # draw_a_delta_v_image(delta_v_values, selected_a_values, title)
 
     # 五个一组画出a-delta_v图像
-    # draw_five_a_delta_v_images(data, index_minV_maxV)
+    # draw_five_a_delta_v_images(data, acc_t_ranges)
 
     # 把速度差相等的a-delta_v图画在一起，可以调整delta来更改速度差
-    # draw_same_delv_a_delta_v_images_by_5(data, index_minV_maxV, 0.2)
+    # draw_same_delv_a_delta_v_images_by_5(data, acc_t_ranges, 0.2)
 
     # 把初速度相等的a-delta_v图画在一起，可以调整delta来更改初速度值
     # get_same_iniv_a_delta_v_images_by_5(data, acc_t_ranges, 0.2)
