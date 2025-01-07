@@ -96,7 +96,7 @@ class DataProcessing:
         :param title: 形如'0.1 ~ 0.2'的字符串
         :return: 初始速度
         """
-        return round(abs(float(title.strip().split('~')[0])), 1)
+        return abs(float(title.strip().split('~')[0]))
 
     @ staticmethod
     def get_target_v(title: str):
