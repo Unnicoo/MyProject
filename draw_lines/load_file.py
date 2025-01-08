@@ -26,7 +26,7 @@ class DataUtils:
         self.data = self.__read_raw_data()
         self.titles = [x for x in self.data]
         self.accelerating_data = self.data
-        self.acc_t_ranges = self.get_accelerating_t_ranges()
+        self.acc_t_ranges = self.__get_accelerating_t_ranges()
 
     def __read_raw_data(self):
         """
@@ -73,9 +73,15 @@ class DataUtils:
     # 文件格式：data = {'v1-v2': [{'timestamp': t1, 'x': x1, 'y': y1, 'a': a1, 'v': v1}, {第二帧信息}...], {'v2-v3'}: [...]}
     # print(data)
 
-    def get_accelerating_t_ranges(self):
+    def __get_accelerating_t_ranges(self):
         accelerating_t_range = accelerating_t_values[self.file_name[:-4]]
         return accelerating_t_range
+
+    def reset_file(self, index):
+        self.file_name = file_names[index]
+        self.data = self.__read_raw_data()
+        self.titles = [x for x in self.data]
+        self.acc_t_ranges = self.__get_accelerating_t_ranges()
 
 
 data_utils = DataUtils()

@@ -1,9 +1,11 @@
 import numpy as np
+import matplotlib.pyplot as plt
 from scipy.optimize import curve_fit
+from pylab import mpl
+from scipy.signal import savgol_filter
 
 from draw_lines.Utils.deal_with_data import DataProcessing
 from draw_lines.load_file import *
-from pylab import mpl
 
 mpl.rcParams['font.sans-serif'] = ['MicroSoft YaHei']
 data = data_utils.data
@@ -34,10 +36,11 @@ def overdamped_second_order(t: np.array, omega_n: float, zeta: float):
 
     # 避免除零错误
     if np.isclose(sqrt_part, 0.0):
+        print('为避免除零错误，采用近似拟合')
         return 1 - np.exp(-sigma * t) * (1 + sigma * t)
 
-    term1 = A1 * np.exp((sqrt_part - sigma) * t)
-    term2 = A2 * np.exp(-(sqrt_part + sigma) * t)
+    term1 = A1 * np.exp(sqrt_part * t)
+    term2 = A2 * np.exp(-sqrt_part * t)
 
     response = 1 - np.exp(-sigma * t) * (term1 + term2)
 
@@ -48,7 +51,7 @@ def fit_overdamped_second_order(t_data, v_data, ini_omega_n=1.0, ini_zeta=1.0):
     initial_guess = [ini_omega_n, ini_zeta]  # [omega_n, zeta]
 
     # bounds = ([0.1, 1.01], [10.0, 10.0])  # [omega_n_min, zeta_min], [omega_n_max, zeta_max]
-    bounds = ([1.0, 1.0], [10.0, 20.0])  # [omega_n_min, zeta_min], [omega_n_max, zeta_max]
+    bounds = ([1.0, 1.0], [15.0, 20.0])  # [omega_n_min, zeta_min], [omega_n_max, zeta_max]
 
     try:
         params, covariance = curve_fit(overdamped_second_order, t_data, v_data, p0=initial_guess, bounds=bounds)    # noqa
@@ -61,18 +64,18 @@ def fit_overdamped_second_order(t_data, v_data, ini_omega_n=1.0, ini_zeta=1.0):
     t_fit = np.linspace(min(t_data), max(t_data), 100)
     y_fit = overdamped_second_order(t_fit, omega_n_fit, zeta_fit)       # noqa
 
-    import matplotlib.pyplot as plt
-
     plt.plot(t_data, v_data, 'bo', label='原始数据')
     plt.plot(t_fit, y_fit, 'r-', label='拟合曲线')
+    plt.title(f'{title}')
     plt.xlabel('时间 t')
-    plt.ylabel('系统响应 y(t)')
+    plt.ylabel('速度 v')
     plt.legend()
     plt.grid(True)
     plt.show()
 
 
 if __name__ == '__main__':
+
     acc_t_ranges = data_utils.acc_t_ranges
 
     for i in range(len(acc_t_ranges)):
@@ -96,3 +99,7 @@ if __name__ == '__main__':
         v_data = v_data / diff_v
 
         fit_overdamped_second_order(t_data, v_data)
+
+        # # 对数据进行平滑处理
+        # v_data_smoothed = savgol_filter(v_data, window_length=51, polyorder=3)
+        # fit_overdamped_second_order(t_data, v_data_smoothed)
