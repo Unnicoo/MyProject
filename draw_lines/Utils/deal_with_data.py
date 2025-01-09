@@ -1,5 +1,9 @@
 from typing import List
 
+from draw_lines.load_file import data_utils
+
+data = data_utils.data
+
 
 class DataProcessing:
     def __init__(self):
@@ -21,7 +25,7 @@ class DataProcessing:
         return x_coordinates, y_coordinates
 
     @ staticmethod
-    def get_t_v_a_values(group: List[dict]):
+    def get_t_v_a_values(group: List[dict], title):
         """
             得到所有的t、a、v值
         :param group: 相当于data[title]，也就是上面的[{'timestamp': t1, 'x': x1, 'y': y1, 'a': a1, 'v': v1}, {第二帧信息}...]
@@ -40,6 +44,14 @@ class DataProcessing:
 
         delta_num = 5
         for i in range(delta_num, len(group)-delta_num):
+            # 得到当前点的速度
+            cur_v = __get_v(i)
+            if cur_v > 1.0:
+                print(f'{title}组的速度采样有误,数值为{cur_v},已去除该点')
+                continue
+            else:
+                v_values.append(cur_v)
+
             # 得到相对第一帧的时间
             relative_time = __get_relative_time(i)
             time_stamps.append(relative_time)
@@ -48,20 +60,18 @@ class DataProcessing:
             a = (__get_v(i+delta_num) - __get_v(i-delta_num)) / (__get_relative_time(i+delta_num) - __get_relative_time(i-delta_num))
             a_values.append(a)
 
-            # 得到当前点的速度
-            v_values.append(__get_v(i))
         return time_stamps, v_values, a_values
 
     @ staticmethod
-    def select_t_v_a_values(data: List[dict], min_t_value: float, max_t_value: float):
+    def select_t_v_a_values(group: List[dict], title, min_t_value: float, max_t_value: float):
         """
             获取指定的时间范围内的v、a、t列表
-        :param data: 相当于data[title]，也就是上面的[{'timestamp': t1, 'x': x1, 'y': y1, 'a': a1, 'v': v1}, {第二帧信息}...]
+        :param group: 相当于data[title]，也就是上面的[{'timestamp': t1, 'x': x1, 'y': y1, 'a': a1, 'v': v1}, {第二帧信息}...]
         :param min_t_value: 最小的 t值
         :param max_t_value: 最大的 t值
         :return: t坐标的列表， a坐标的列表，v坐标的列表
         """
-        time_stamps, v_values, a_values = DataProcessing.get_t_v_a_values(data)
+        time_stamps, v_values, a_values = DataProcessing.get_t_v_a_values(group, title)
         selected_v_values = []
         selected_a_values = []
         time_values = []
@@ -94,6 +104,10 @@ class DataProcessing:
         return abs(float(title.strip().split('~')[1]))
 
     @ staticmethod
+    def get_diff_v(title: str):
+        return round(DataProcessing.get_target_v(title) - DataProcessing.get_initial_v(title), 2)
+
+    @ staticmethod
     def get_delta_v(target_v: float, v_values: list):
         """
             获取delta_v，也就是目标速度减去当前速度
@@ -109,12 +123,12 @@ class DataProcessing:
         return delta_v_values
 
     @ staticmethod
-    def get_same_delta_data(_data: dict, delta):
+    def get_same_delta_v_data(delta):
         """
-            用不到
+            获取相同初末速度差值的数据
         """
         appointed_data = {}
-        for title in _data:
-            if round(DataProcessing.get_target_v(title) - DataProcessing.get_initial_v(title), 2) == delta:
-                appointed_data[title] = _data[title]
+        for title in data:
+            if DataProcessing.get_diff_v(title) == delta:
+                appointed_data[title] = data[title]
         return appointed_data

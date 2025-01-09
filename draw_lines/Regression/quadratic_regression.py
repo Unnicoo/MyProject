@@ -10,8 +10,8 @@ titles = data_utils.titles
 
 for i in range(len(titles)):
     title = titles[i]
-    file = data[title]
-    _, v_values, a_values = DataProcessing.get_t_v_a_values(file)
+    group = data[title]
+    _, v_values, a_values = DataProcessing.get_t_v_a_values(group, title)
     target_v = DataProcessing.get_target_v(title)
     delta_v_values = DataProcessing.get_delta_v(target_v, v_values)
     delta_v = np.array(delta_v_values)  # 你的delta_v数据点

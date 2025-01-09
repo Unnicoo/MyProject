@@ -80,13 +80,13 @@ if __name__ == '__main__':
 
     for i in range(len(acc_t_ranges)):
         title = titles[acc_t_ranges[i][0]]
-        file = data[title]
+        group = data[title]
         ini_v = DataProcessing.get_initial_v(title)
         tar_v = DataProcessing.get_target_v(title)
         diff_v = round(tar_v - ini_v, 2)
         print(f'\n目标速度减去初始速度的差值为{diff_v}')
         # time_values, selected_v_values, _ = DataProcessing.get_t_v_a_values(file)
-        t_values, v_values, _ = DataProcessing.select_t_v_a_values(file, acc_t_ranges[i][1], acc_t_ranges[i][2])
+        t_values, v_values, _ = DataProcessing.select_t_v_a_values(group, title, acc_t_ranges[i][1], acc_t_ranges[i][2])
 
         target_v = DataProcessing.get_target_v(title)
 
