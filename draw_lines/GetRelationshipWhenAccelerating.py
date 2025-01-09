@@ -2,7 +2,7 @@ from draw_lines.Utils.deal_with_data import DataProcessing
 from draw_lines.load_file import *
 
 
-if __name__=='__main__':
+if __name__ == '__main__':
     data = data_utils.data
     titles = data_utils.titles
     acc_t_ranges = data_utils.acc_t_ranges

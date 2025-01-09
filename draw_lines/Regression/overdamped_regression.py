@@ -47,6 +47,40 @@ def overdamped_second_order(t: np.array, omega_n: float, zeta: float):
     return response
 
 
+def overdamped_second_order_derivative(t: np.array, omega_n: float, zeta: float):
+    """
+    计算过阻尼二阶系统响应的加速度。
+
+    参数:
+    t : 时间向量
+    omega_n: 自然频率
+    zeta: 阻尼比 (zeta > 1 表示过阻尼)
+
+    返回:
+    np.array: 加速度响应
+    """
+    if zeta <= 1:
+        raise ValueError("阻尼比 zeta 应大于 1，表示过阻尼系统。")
+
+    sigma = zeta * omega_n
+    sqrt_part = np.sqrt(sigma ** 2 - omega_n ** 2)
+
+    A1 = (sigma + sqrt_part) / (2 * sqrt_part)
+    A2 = -(sigma - sqrt_part) / (2 * sqrt_part)
+
+    if np.isclose(sqrt_part, 0.0):
+        # 避免除零错误，返回近似表达式
+        print('阻尼差较小，采用近似形式')
+        return sigma**2 * np.exp(-sigma * t) * (1 + sigma * t)
+
+    # 计算加速度
+    term1 = sigma * (A1 * np.exp(sqrt_part * t) + A2 * np.exp(-sqrt_part * t))
+    term2 = sqrt_part * (A1 * np.exp(sqrt_part * t) - A2 * np.exp(-sqrt_part * t))
+    decay = -np.exp(-sigma * t) * (term1 - term2)
+
+    return decay
+
+
 def fit_overdamped_second_order(t_data, v_data, ini_omega_n=1.0, ini_zeta=1.0):
     initial_guess = [ini_omega_n, ini_zeta]  # [omega_n, zeta]
 
@@ -61,7 +95,7 @@ def fit_overdamped_second_order(t_data, v_data, ini_omega_n=1.0, ini_zeta=1.0):
     except RuntimeError as e:
         print(f"拟合失败: {e}")
 
-    t_fit = np.linspace(min(t_data), max(t_data), 100)
+    t_fit = np.linspace(min(t_data), max(t_data), len(t_data))
     y_fit = overdamped_second_order(t_fit, omega_n_fit, zeta_fit)       # noqa
 
     plt.plot(t_data, v_data, 'bo', label='原始数据')
@@ -72,6 +106,27 @@ def fit_overdamped_second_order(t_data, v_data, ini_omega_n=1.0, ini_zeta=1.0):
     plt.legend()
     plt.grid(True)
     plt.show()
+
+    return t_fit, omega_n_fit, zeta_fit
+
+
+def savgol_derivative(t: np.array, v: np.array, polyorder=3, window_length=51):
+    """
+    使用 Savitzky-Golay 滤波器计算平滑导数。
+
+    参数:
+    t : 时间向量
+    v : 速度向量
+    polyorder: 多项式阶数
+    window_length: 滤波窗口大小 (必须为奇数)
+
+    返回:
+    np.array, np.array: 时间向量和加速度向量
+    """
+    # 确保时间间隔是均匀的，否则需要插值
+    dt = np.mean(np.diff(t))
+    a = savgol_filter(v, window_length=window_length, polyorder=polyorder, deriv=1, delta=dt)
+    return t, a
 
 
 if __name__ == '__main__':
@@ -86,7 +141,7 @@ if __name__ == '__main__':
         diff_v = round(tar_v - ini_v, 2)
         print(f'\n目标速度减去初始速度的差值为{diff_v}')
         # time_values, selected_v_values, _ = DataProcessing.get_t_v_a_values(file)
-        t_values, v_values, _ = DataProcessing.select_t_v_a_values(group, title, acc_t_ranges[i][1], acc_t_ranges[i][2])
+        t_values, v_values, a_values = DataProcessing.select_t_v_a_values(group, title, acc_t_ranges[i][1], acc_t_ranges[i][2])
 
         target_v = DataProcessing.get_target_v(title)
 
@@ -98,8 +153,34 @@ if __name__ == '__main__':
         v_data = v_data - v_data[0]
         v_data = v_data / diff_v
 
-        fit_overdamped_second_order(t_data, v_data)
+        # t_fit, omega_n_fit, zeta_fit = fit_overdamped_second_order(t_data, v_data)
 
-        # # 对数据进行平滑处理
-        # v_data_smoothed = savgol_filter(v_data, window_length=51, polyorder=3)
-        # fit_overdamped_second_order(t_data, v_data_smoothed)
+        v_data_smoothed = savgol_filter(v_data, window_length=25, polyorder=3)
+        t_fit, omega_n_fit, zeta_fit = fit_overdamped_second_order(t_data, v_data_smoothed)
+
+        # 绘制at曲线
+        t_smoothed, a_smoothed = savgol_derivative(t_data, v_data_smoothed, polyorder=3, window_length=11)
+
+        a_fit = overdamped_second_order_derivative(t_fit, omega_n_fit, zeta_fit)
+        a_fit = abs(a_fit)
+
+        # plt.plot(t_smoothed, a_smoothed, label='实际加速度曲线 (a-t)')
+        # plt.plot(t_fit, a_fit, label='拟合加速度曲线 (a-t)')
+        # plt.xlabel('时间 t')
+        # plt.ylabel('加速度 a')
+        # plt.title('过阻尼二阶系统的加速度响应')
+        # plt.legend()
+        # plt.grid(True)
+        # plt.show()
+
+        # 绘制a-delta_v曲线
+        # delta_v_data = tar_v - v_data
+        delta_v_data = tar_v - v_data_smoothed
+        plt.plot(delta_v_data, a_smoothed, label='实际加速度曲线 (a-delta_v)')
+        plt.plot(delta_v_data, a_fit, label='拟合加速度曲线 (a-delta_v)')
+        plt.xlabel('速度差值 delta_v')
+        plt.ylabel('加速度 a')
+        plt.title('加速度关于速度差值的曲线')
+        plt.legend()
+        plt.grid(True)
+        plt.show()

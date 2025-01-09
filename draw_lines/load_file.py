@@ -8,16 +8,16 @@ cur_dir = Path(__file__).parent
 data_path = cur_dir / 'data'
 file_names = [f for f in os.listdir(data_path) if f.endswith('.txt')]
 # file_names = [
-#     '0.1~0.6正向.txt',                      # index:0, 5个前进数据
-#     '0.05~0.55正向.txt',                    # index:1, 15个前进数据
-#     '-0.05~-0.55以及-0.1~-0.5倒车.txt',      # index:2, 25个倒车数据
-#     '0.1~0.5正向两组.txt',                   # index:3
+#     '-0.05~-0.55以及-0.1~-0.5倒车.txt',      # index:0
+#     '-0.05~-0.55倒车.txt',                  # index:1
+#     '-0.1~-0.5倒车.txt',                    # index:2
+#     '0.05~0.55正向.txt',                    # index:3
 #     '0.05~0.55正向两组.txt',                 # index:4
-#     '-0.1~-0.5倒车.txt',                    # index:5
-#     '-0.05~-0.55倒车.txt'                   # index:6
+#     '0.1~0.5正向两组.txt',                   # index:5
+#     '0.1~0.6正向.txt'                       # index:6
 # ]
 
-DEFAULT_INDEX = 0
+DEFAULT_INDEX = 4
 
 
 class DataUtils:
