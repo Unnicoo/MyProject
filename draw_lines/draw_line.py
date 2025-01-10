@@ -97,13 +97,17 @@ class GenerateImage:
         GenerateImage.__draw_scatter_image(t_values, v_values, pic_title, x_label='t', y_label='v')
 
     @ staticmethod
-    def draw_accelerating_part(title, t_values, v_values, time_values, selected_v_values):
+    def draw_accelerating_part(title, min_t, max_t):
         """
             在原 v-t 图像上画出挑选的加速部分
         """
+        group = data[title]
+        t_values, v_values, _ = DataProcessing.get_t_v_a_values(group, title)
+        selected_t_values, selected_v_values, _ = DataProcessing.select_t_v_a_values(group, title, min_t, max_t)
+
         fig, ax = plt.subplots(figsize=(10, 10))
         ax.scatter(t_values, v_values)
-        ax.scatter(time_values, selected_v_values, color='r')
+        ax.scatter(selected_t_values, selected_v_values, color='r')
         ax.set_xlabel('t')
         ax.set_ylabel('v')
         plt.title(f'{title} v - t line')

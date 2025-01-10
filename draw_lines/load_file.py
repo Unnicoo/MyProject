@@ -17,7 +17,7 @@ file_names = [f for f in os.listdir(data_path) if f.endswith('.txt')]
 #     '0.1~0.6正向.txt'                       # index:6
 # ]
 
-DEFAULT_INDEX = 4
+DEFAULT_INDEX = 6
 
 
 class DataUtils:

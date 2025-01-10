@@ -1,5 +1,6 @@
 from draw_lines.Utils.deal_with_data import DataProcessing
 from draw_lines.load_file import *
+from draw_lines.draw_line import *
 
 
 if __name__ == '__main__':
@@ -22,7 +23,7 @@ if __name__ == '__main__':
         # GenerateImage.draw_random_v_t_images(selected_t_values, selected_v_values, title)
 
         # 画出加速部分在全部过程中的部分的vt图
-        # GenerateImage.draw_accelerating_part(title, t_values, v_values, selected_t_values, selected_v_values)
+        # GenerateImage.draw_accelerating_part(title, min_t, max_t)
 
         # 画出全部过程中的at图
         # GenerateImage.draw_a_t_image(title)
