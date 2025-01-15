@@ -1,3 +1,5 @@
+from pprint import pprint
+
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy.optimize import curve_fit
@@ -155,56 +157,138 @@ def compare_a_t_images(t_data, a_data, t_fit, a_fit):
 
 if __name__ == '__main__':
 
-    acc_t_ranges = data_utils.acc_t_ranges
+    all_ini_v = []
+    all_tar_v = []
+    all_diff_v = []
+    all_omega_n = []
+    all_zeta = []
 
-    for i in range(len(acc_t_ranges)):
-        title = titles[acc_t_ranges[i][0]]
-        group = data[title]
-        ini_v = DataProcessing.get_initial_v(title)
-        tar_v = DataProcessing.get_target_v(title)
-        min_t = acc_t_ranges[i][1]
-        max_t = acc_t_ranges[i][2]
-        diff_v = round(tar_v - ini_v, 2)
-        print(f'\n目标速度减去初始速度的差值为{diff_v}')
+    for index in range(7):
+        data_utils.reset_file(index)
+        data = data_utils.data
+        titles = data_utils.titles
+        acc_t_ranges = data_utils.acc_t_ranges
 
-        t_values, v_values, a_values = DataProcessing.select_t_v_a_values(group, title, acc_t_ranges[i][1], acc_t_ranges[i][2])
+        for i in range(len(acc_t_ranges)):
+            title = titles[acc_t_ranges[i][0]]
+            group = data[title]
+            ini_v = DataProcessing.get_initial_v(title)
+            tar_v = DataProcessing.get_target_v(title)
+            min_t = acc_t_ranges[i][1]
+            max_t = acc_t_ranges[i][2]
+            diff_v = round(tar_v - ini_v, 2)
+            print(f'\n目标速度减去初始速度的差值为{diff_v}')
 
-        t_data = np.array(t_values)
-        v_data = np.array(v_values)
+            t_values, v_values, a_values = DataProcessing.select_t_v_a_values(group, title, acc_t_ranges[i][1], acc_t_ranges[i][2])
 
-        t_data = t_data - t_data[0]
-        t_data = t_data * 1e-3
-        start_v = v_data[0]
-        v_data = v_data - start_v
-        v_data = v_data / diff_v
-        v_data_smoothed = savgol_filter(v_data, window_length=25, polyorder=3)
+            t_data = np.array(t_values)
+            v_data = np.array(v_values)
 
-        # 用原始数据拟合vt图
-        # t_fit, omega_n_fit, zeta_fit = fit_overdamped_second_order(t_data, v_data, is_draw_image=True)
+            # 数据处理
+            t_data = t_data - t_data[0]
+            t_data = t_data * 1e-3
+            start_v = v_data[0]
+            v_data = v_data - start_v
+            v_data = v_data / diff_v
 
-        # 用经过平滑处理的数据拟合vt图
-        t_fit, omega_n_fit, zeta_fit = fit_overdamped_second_order(t_data, v_data_smoothed, is_draw_image=True)
+            # 平滑处理
+            v_data_smoothed = savgol_filter(v_data, window_length=25, polyorder=3)
 
-        # 拟合由vt图得到的加速度
-        a_fit = abs(overdamped_second_order_derivative(t_fit, omega_n_fit, zeta_fit))
-        t_smoothed, a_smoothed = savgol_derivative(t_data, v_data_smoothed, polyorder=3, window_length=11)
+            # 用原始数据拟合vt图
+            # t_fit, omega_n_fit, zeta_fit = fit_overdamped_second_order(t_data, v_data, is_draw_image=True)
 
-        # 绘制at曲线
-        # compare_a_t_images(t_smoothed, a_smoothed, t_fit, a_fit)
+            # 用经过平滑处理的数据拟合vt图
+            t_fit, omega_n_fit, zeta_fit = fit_overdamped_second_order(t_data, v_data_smoothed, is_draw_image=False)
 
-        # 绘制截取的部分在所有数据中的部分的vt曲线
-        # GenerateImage.draw_accelerating_part(title, min_t, max_t)
+            # 拟合由vt图得到的加速度
+            a_fit = abs(overdamped_second_order_derivative(t_fit, omega_n_fit, zeta_fit))
+            t_smoothed, a_smoothed = savgol_derivative(t_data, v_data_smoothed, polyorder=3, window_length=11)
 
-        # 绘制a-delta_v曲线
-        # delta_v_data = tar_v - v_data
+            # 绘制at曲线
+            # compare_a_t_images(t_smoothed, a_smoothed, t_fit, a_fit)
+
+            # 绘制截取的部分在所有数据中的部分的vt曲线
+            # GenerateImage.draw_accelerating_part(title, min_t, max_t)
 
         # 绘制a-delta_v对比图像
 
-        # 使用真实速度
-        v_data_smoothed = v_data_smoothed * diff_v
-        v_data_smoothed = v_data_smoothed + start_v
-        delta_v_data = tar_v - v_data_smoothed
+            # 使用真实速度
+            v_data_smoothed = v_data_smoothed * diff_v
+            v_data_smoothed = v_data_smoothed + start_v
+            delta_v_data = tar_v - v_data_smoothed
 
-        # 令tar_v=1
-        # delta_v_data = 1.0 - v_data_smoothed
-        compare_a_deltav_images(delta_v_data, a_smoothed, a_fit)
+            # 令tar_v=1,使用0-1内的缩放的速度
+            # delta_v_data = 1.0 - v_data_smoothed
+
+            # 作出a-delta_v图像
+            # compare_a_deltav_images(delta_v_data, a_smoothed, a_fit)
+            if zeta_fit > 2:
+                continue
+            all_ini_v.append(ini_v)
+            all_tar_v.append(tar_v)
+            all_diff_v.append(diff_v)
+            all_omega_n.append(omega_n_fit)
+            all_zeta.append(zeta_fit)
+
+    plt.show()
+    # diff_v数据的个数
+    # {0.1: 45, 0.2: 37, 0.3: 28, 0.4: 16, 0.5: 6}
+
+    # 绘制系统参数关于其他值的图像,找不出什么规律
+    # GenerateImage.draw_scatter_image(all_ini_v, all_omega_n, 'omega_n-ini_v', x_label='ini_v', y_label='omega_n', alpha=0.3)      # noqa
+    # GenerateImage.draw_scatter_image(all_tar_v, all_omega_n, 'omega_n-tar_v', x_label='tar_v', y_label='omega_n', alpha=0.3)      # noqa
+    # GenerateImage.draw_scatter_image(all_ini_v, all_zeta, 'zeta-ini_v', x_label='ini_v', y_label='zeta', alpha=0.3)
+    # GenerateImage.draw_scatter_image(all_tar_v, all_zeta, 'zeta-tar_v', x_label='tar_v', y_label='zeta', alpha=0.3)
+
+    # 添加随机偏移
+    jitter = np.random.normal(0, 0.005, size=len(all_diff_v))
+    # 绘制系统参数关于diff_v的图像
+    # GenerateImage.draw_scatter_image(all_diff_v, all_omega_n, 'omega_n-diff_v', x_label='diff_v', y_label='omega_n', alpha=0.3)    # noqa
+    # GenerateImage.draw_scatter_image(all_diff_v, all_zeta, 'zeta-diff_v', x_label='diff_v', y_label='zeta', alpha=0.3)             # noqa
+
+    # 绘制omega_n-zeta图像
+    # GenerateImage.draw_scatter_image(all_zeta, all_omega_n, 'omega_n-zeta', 'zeta', 'omega_n', alpha=0.3)
+
+    # 绘制zeta<1.00000001的omega_n-zeta图像
+    corresponding_zeta = []
+    corresponding_omega_n = []
+    corresponding_ini_v = []
+    corresponding_tar_v = []
+    corresponding_diff_v = []
+
+    other_omega_n = []
+    other_zeta = []
+    for i in range(len(all_zeta)):
+        zeta = all_zeta[i]
+        omega_n = all_omega_n[i]
+        ini_v = all_ini_v[i]
+        tar_v = all_tar_v[i]
+        diff_v = all_diff_v[i]
+        if zeta < 1.000000000001:
+            corresponding_zeta.append(zeta)
+            corresponding_omega_n.append(omega_n)
+            corresponding_ini_v.append(ini_v)
+            corresponding_tar_v.append(tar_v)
+            corresponding_diff_v.append(diff_v)
+        else:
+            other_omega_n.append(omega_n)
+            other_zeta.append(zeta)
+
+    pprint(all_omega_n)
+    pprint(all_zeta)
+
+    # omega_n和zeta之间的关系
+    # GenerateImage.draw_scatter_image(corresponding_zeta, corresponding_omega_n, 'omega_n-zeta when zeta<1.00000001', 'zeta', 'omega_n', alpha=0.3)    # noqa
+
+    # zeta和各速度值之间的关系
+    # GenerateImage.draw_scatter_image(corresponding_ini_v, corresponding_zeta, 'zeta-ini_v when zeta<1.00000001', 'ini_v', 'zeta', alpha=0.3)    # noqa
+    # GenerateImage.draw_scatter_image(corresponding_tar_v, corresponding_zeta, 'zeta-tar_v when zeta<1.00000001', 'tar_v', 'zeta', alpha=0.3)    # noqa
+    # GenerateImage.draw_scatter_image(corresponding_diff_v, corresponding_zeta, 'zeta-diff_v when zeta<1.00000001', 'diff_v', 'zeta', alpha=0.3)    # noqa
+
+    # omega_n和各速度值之间的关系
+    # GenerateImage.draw_scatter_image(corresponding_ini_v, corresponding_omega_n, 'omega_n-ini_v when zeta<1.00000001', 'ini_v', 'omega_n', alpha=0.3)    # noqa
+    # GenerateImage.draw_scatter_image(corresponding_tar_v, corresponding_omega_n, 'omega_n-tar_v when zeta<1.00000001', 'tar_v', 'omega_n', alpha=0.3)    # noqa
+    # GenerateImage.draw_scatter_image(corresponding_diff_v, corresponding_omega_n, 'omega_n-diff_v when zeta<1.00000001', 'diff_v', 'omega_n', alpha=0.3)    # noqa
+
+
+

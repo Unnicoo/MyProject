@@ -16,12 +16,12 @@ class GenerateImage:
         raise TypeError
 
     @ staticmethod
-    def __draw_scatter_image(x_values, y_values, pic_title, x_label='x', y_label='y'):
+    def draw_scatter_image(x_values, y_values, pic_title, x_label='x', y_label='y', alpha=1):
         assert len(x_values) == len(y_values)
 
         plt.figure()
 
-        plt.scatter(x_values, y_values)
+        plt.scatter(x_values, y_values, alpha=alpha)
         plt.xlabel(x_label)
         plt.ylabel(y_label)
 
@@ -56,7 +56,7 @@ class GenerateImage:
         x_coord, y_coord = DataProcessing.get_x_y_values(group)
 
         pic_title = f'{title}, y-x image'
-        GenerateImage.__draw_scatter_image(x_coord, y_coord, pic_title)
+        GenerateImage.draw_scatter_image(x_coord, y_coord, pic_title)
 
     @ staticmethod
     def draw_a_t_image(title):
@@ -67,7 +67,7 @@ class GenerateImage:
         t_values, _, a_values = DataProcessing.get_t_v_a_values(group, title)
 
         pic_title = f'{title}, a-t image'
-        GenerateImage.__draw_scatter_image(t_values, a_values, pic_title, x_label='t', y_label='a')
+        GenerateImage.draw_scatter_image(t_values, a_values, pic_title, x_label='t', y_label='a')
         # plt.plot(time_stamps, a_values, color='blue', linestyle='-', marker='o')
 
     @ staticmethod
@@ -76,7 +76,7 @@ class GenerateImage:
         _, v_values, a_values = DataProcessing.get_t_v_a_values(group, title)
 
         pic_title = f'{title}, a-v image'
-        GenerateImage.__draw_scatter_image(v_values, a_values, pic_title, x_label='v', y_label='a')
+        GenerateImage.draw_scatter_image(v_values, a_values, pic_title, x_label='v', y_label='a')
 
     @ staticmethod
     def draw_v_t_image(title):
@@ -94,13 +94,14 @@ class GenerateImage:
             根据输入的数据绘制图像
         """
         pic_title = f'{title}, v-t image'
-        GenerateImage.__draw_scatter_image(t_values, v_values, pic_title, x_label='t', y_label='v')
+        GenerateImage.draw_scatter_image(t_values, v_values, pic_title, x_label='t', y_label='v')
 
     @ staticmethod
     def draw_accelerating_part(title, min_t, max_t):
         """
             在原 v-t 图像上画出挑选的加速部分
         """
+        print([x for x in data])
         group = data[title]
         t_values, v_values, _ = DataProcessing.get_t_v_a_values(group, title)
         selected_t_values, selected_v_values, _ = DataProcessing.select_t_v_a_values(group, title, min_t, max_t)
@@ -192,7 +193,7 @@ class GenerateImage:
         delta_v_values = DataProcessing.get_delta_v(float(target_v), selected_v_values)
 
         pic_title = f'{title}, a-delta_v image'
-        GenerateImage.__draw_scatter_image(delta_v_values, selected_a_values, pic_title)
+        GenerateImage.draw_scatter_image(delta_v_values, selected_a_values, pic_title)
 
     @ staticmethod
     def draw_a_delta_v_images(_data: dict = data, acc_t_ranges=data_utils.acc_t_ranges, max_group_count=6):

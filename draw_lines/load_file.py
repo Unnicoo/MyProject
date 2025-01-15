@@ -2,7 +2,8 @@ import os
 import re
 from pathlib import Path
 
-from draw_lines.data.accelerating_part_t_values import accelerating_t_values
+# from draw_lines.data.accelerating_part_t_values import accelerating_t_values
+from draw_lines.data.try_t_part import accelerating_t_values
 
 cur_dir = Path(__file__).parent
 data_path = cur_dir / 'data'
@@ -17,7 +18,7 @@ file_names = [f for f in os.listdir(data_path) if f.endswith('.txt')]
 #     '0.1~0.6正向.txt'                       # index:6
 # ]
 
-DEFAULT_INDEX = 6
+DEFAULT_INDEX = 0
 
 
 class DataUtils:
