@@ -84,7 +84,7 @@ def overdamped_second_order_derivative(t: np.array, omega_n: float, zeta: float)
     return a
 
 
-def fit_overdamped_second_order(t_data, v_data, ini_omega_n=1.0, ini_zeta=1.0, is_draw_image=True):
+def fit_overdamped_second_order(t_data, v_data, ini_omega_n=1.0, ini_zeta=1.0, is_draw_image=True, is_param=True, alpha=1):
     initial_guess = [ini_omega_n, ini_zeta]  # [omega_n, zeta]
 
     # bounds = ([0.1, 1.01], [10.0, 10.0])  # [omega_n_min, zeta_min], [omega_n_max, zeta_max]
@@ -93,8 +93,9 @@ def fit_overdamped_second_order(t_data, v_data, ini_omega_n=1.0, ini_zeta=1.0, i
     try:
         params, covariance = curve_fit(overdamped_second_order, t_data, v_data, p0=initial_guess, bounds=bounds)    # noqa
         omega_n_fit, zeta_fit = params
-        print(f"拟合得到的自然频率 omega_n: {omega_n_fit}")
-        print(f"拟合得到的阻尼比 zeta: {zeta_fit}")
+        if is_param:
+            print(f"拟合得到的自然频率 omega_n: {omega_n_fit}")
+            print(f"拟合得到的阻尼比 zeta: {zeta_fit}")
     except RuntimeError as e:
         print(f"拟合失败: {e}")
 
@@ -102,7 +103,7 @@ def fit_overdamped_second_order(t_data, v_data, ini_omega_n=1.0, ini_zeta=1.0, i
     y_fit = overdamped_second_order(t_fit, omega_n_fit, zeta_fit)       # noqa
 
     if is_draw_image:
-        plt.plot(t_data, v_data, 'bo', label='原始数据')
+        plt.plot(t_data, v_data, 'bo', label='原始数据', alpha=alpha)
         plt.plot(t_fit, y_fit, 'r-', label='拟合曲线')
         plt.title(f'{title}')
         plt.xlabel('时间 t')
@@ -163,6 +164,11 @@ if __name__ == '__main__':
     all_omega_n = []
     all_zeta = []
 
+    all_t = np.array([])
+    all_v_smoothed = np.array([])
+
+    tar_diff_v = 0.1
+
     for index in range(7):
         data_utils.reset_file(index)
         data = data_utils.data
@@ -180,7 +186,9 @@ if __name__ == '__main__':
             print(f'\n目标速度减去初始速度的差值为{diff_v}')
 
             t_values, v_values, a_values = DataProcessing.select_t_v_a_values(group, title, acc_t_ranges[i][1], acc_t_ranges[i][2])
-
+            # 删去不能用的数据
+            if len(t_values) < 30:
+                continue
             t_data = np.array(t_values)
             v_data = np.array(v_values)
 
@@ -198,7 +206,7 @@ if __name__ == '__main__':
             # t_fit, omega_n_fit, zeta_fit = fit_overdamped_second_order(t_data, v_data, is_draw_image=True)
 
             # 用经过平滑处理的数据拟合vt图
-            t_fit, omega_n_fit, zeta_fit = fit_overdamped_second_order(t_data, v_data_smoothed, is_draw_image=False)
+            t_fit, omega_n_fit, zeta_fit = fit_overdamped_second_order(t_data, v_data_smoothed, is_draw_image=False, is_param=False)
 
             # 拟合由vt图得到的加速度
             a_fit = abs(overdamped_second_order_derivative(t_fit, omega_n_fit, zeta_fit))
@@ -213,15 +221,20 @@ if __name__ == '__main__':
         # 绘制a-delta_v对比图像
 
             # 使用真实速度
-            v_data_smoothed = v_data_smoothed * diff_v
-            v_data_smoothed = v_data_smoothed + start_v
-            delta_v_data = tar_v - v_data_smoothed
+            # v_data_smoothed = v_data_smoothed * diff_v
+            # v_data_smoothed = v_data_smoothed + start_v
+            # delta_v_data = tar_v - v_data_smoothed
 
             # 令tar_v=1,使用0-1内的缩放的速度
             # delta_v_data = 1.0 - v_data_smoothed
 
             # 作出a-delta_v图像
             # compare_a_deltav_images(delta_v_data, a_smoothed, a_fit)
+
+            if diff_v == tar_diff_v:
+                all_t = np.append(all_t, t_data)
+                all_v_smoothed = np.append(all_v_smoothed, v_data_smoothed - v_data_smoothed[0])
+
             if zeta_fit > 2:
                 continue
             all_ini_v.append(ini_v)
@@ -230,7 +243,10 @@ if __name__ == '__main__':
             all_omega_n.append(omega_n_fit)
             all_zeta.append(zeta_fit)
 
-    plt.show()
+    # 作相等diff_v条件下的所有v-t图像拟合
+    # title = f'diff_v={tar_diff_v}'
+    # t_fit, omega_n_fit, zeta_fit = fit_overdamped_second_order(all_t, all_v_smoothed, is_draw_image=True, alpha=0.05)
+
     # diff_v数据的个数
     # {0.1: 45, 0.2: 37, 0.3: 28, 0.4: 16, 0.5: 6}
 
@@ -273,9 +289,6 @@ if __name__ == '__main__':
         else:
             other_omega_n.append(omega_n)
             other_zeta.append(zeta)
-
-    pprint(all_omega_n)
-    pprint(all_zeta)
 
     # omega_n和zeta之间的关系
     # GenerateImage.draw_scatter_image(corresponding_zeta, corresponding_omega_n, 'omega_n-zeta when zeta<1.00000001', 'zeta', 'omega_n', alpha=0.3)    # noqa
