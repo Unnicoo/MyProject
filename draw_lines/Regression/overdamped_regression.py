@@ -206,7 +206,7 @@ if __name__ == '__main__':
             # t_fit, omega_n_fit, zeta_fit = fit_overdamped_second_order(t_data, v_data, is_draw_image=True)
 
             # 用经过平滑处理的数据拟合vt图
-            t_fit, omega_n_fit, zeta_fit = fit_overdamped_second_order(t_data, v_data_smoothed, is_draw_image=False, is_param=False)
+            t_fit, omega_n_fit, zeta_fit = fit_overdamped_second_order(t_data, v_data_smoothed, is_draw_image=False, is_param=True)
 
             # 拟合由vt图得到的加速度
             a_fit = abs(overdamped_second_order_derivative(t_fit, omega_n_fit, zeta_fit))
