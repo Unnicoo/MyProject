@@ -1,5 +1,6 @@
 import matplotlib.pyplot as plt
 import matplotlib.gridspec as gridspec
+import numpy as np
 
 from draw_lines.Utils.deal_with_data import DataProcessing
 from draw_lines.load_file import *
@@ -16,7 +17,7 @@ class GenerateImage:
         raise TypeError
 
     @ staticmethod
-    def draw_scatter_image(x_values, y_values, pic_title, x_label='x', y_label='y', alpha=1):
+    def draw_scatter_image(x_values, y_values, pic_title, x_label='x', y_label='y', alpha=1.0):
         assert len(x_values) == len(y_values)
 
         plt.figure()
@@ -79,30 +80,31 @@ class GenerateImage:
         GenerateImage.draw_scatter_image(v_values, a_values, pic_title, x_label='v', y_label='a')
 
     @ staticmethod
-    def draw_v_t_image(title):
+    def draw_v_t_image(title, alpha=1.0):
         """
             单独画一条v-t散点图
         """
         group = data[title][:]
         t_values, v_values, _ = DataProcessing.get_t_v_a_values(group, title)
+        t_values = np.array(t_values)
+        t_values -= t_values[0]
+        print(t_values[0])
 
-        GenerateImage.draw_v_t_image_with_data(t_values, v_values, title)
+        GenerateImage.draw_v_t_image_with_data(t_values, v_values, title, alpha=alpha)
 
     @ staticmethod
-    def draw_v_t_image_with_data(t_values, v_values, title):
+    def draw_v_t_image_with_data(t_values, v_values, title, alpha=1.0):
         """
             根据输入的数据绘制图像
         """
         pic_title = f'{title}, v-t image'
-        GenerateImage.draw_scatter_image(t_values, v_values, pic_title, x_label='t', y_label='v')
+        GenerateImage.draw_scatter_image(t_values, v_values, pic_title, x_label='t', y_label='v', alpha=alpha)
 
     @ staticmethod
-    def draw_accelerating_part(title, min_t, max_t):
+    def draw_accelerating_part(title, group, min_t, max_t):
         """
             在原 v-t 图像上画出挑选的加速部分
         """
-        print([x for x in data])
-        group = data[title]
         t_values, v_values, _ = DataProcessing.get_t_v_a_values(group, title)
         selected_t_values, selected_v_values, _ = DataProcessing.select_t_v_a_values(group, title, min_t, max_t)
 
@@ -309,6 +311,23 @@ if __name__ == '__main__':
     # GenerateImage.get_same_start_v_images()
 
     # 调整delta的数值以获取速度差为delta的v-t图组
-    GenerateImage.get_same_diff_v_images(0.1)
+    # GenerateImage.get_same_diff_v_images(0.1)
+
+    # for i in range(7, 8):
+    #     data_utils.reset_file(i)
+
+    # 目标速度的曲线
+    title = titles[0]
+    group = data[title]
+    v_values, t_values= DataProcessing.get_v_t_values(group, title)
+    targetV = DataProcessing.get_targetV(group)
+    plt.scatter(t_values, list(targetV.values()))
+    plt.show()
+
+    # 绘制 v-t 图
+    print(data_utils.titles)
+    title = titles[0]
+    print(f'title: {title}')
+    GenerateImage.draw_v_t_image(title, alpha=0.5)
 
     pass

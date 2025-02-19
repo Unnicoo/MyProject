@@ -16,9 +16,10 @@ file_names = [f for f in os.listdir(data_path) if f.endswith('.txt')]
 #     '0.05~0.55正向两组.txt',                 # index:4
 #     '0.1~0.5正向两组.txt',                   # index:5
 #     '0.1~0.6正向.txt'                       # index:6
+#     'sin曲线-0.55~0.55.txt.txt'                 # index:7
+#     'sin曲线0.35~0.55.txt.txt'                  # index:8
 # ]
-
-DEFAULT_INDEX = 0
+DEFAULT_INDEX = 8
 
 
 class DataUtils:
@@ -75,7 +76,11 @@ class DataUtils:
     # print(data)
 
     def __get_accelerating_t_ranges(self):
-        accelerating_t_range = accelerating_t_values[self.file_name[:-4]]
+        try:
+            accelerating_t_range = accelerating_t_values[self.file_name[:-4]]
+        except:
+            print("thers's no accelerating_t_ranges")
+            accelerating_t_range = []
         return accelerating_t_range
 
     def reset_file(self, index):

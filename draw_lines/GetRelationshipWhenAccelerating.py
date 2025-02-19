@@ -23,7 +23,7 @@ if __name__ == '__main__':
         # GenerateImage.draw_random_v_t_images(selected_t_values, selected_v_values, title)
 
         # 画出加速部分在全部过程中的部分的vt图
-        GenerateImage.draw_accelerating_part(title, min_t, max_t)
+        # GenerateImage.draw_accelerating_part(title, group, min_t, max_t)
 
         # 画出全部过程中的at图
         # GenerateImage.draw_a_t_image(title)

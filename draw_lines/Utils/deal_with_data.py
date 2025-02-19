@@ -25,6 +25,56 @@ class DataProcessing:
         return x_coordinates, y_coordinates
 
     @ staticmethod
+    def get_targetV(group: List[dict]):
+        try:
+            for i in range(len(group)):
+                trash = group[i]['targetV']
+        except Exception as e:
+            print(f'Warning: {e}')
+            print("there's no targetV")
+        else:
+            targetV = {}
+            delta_num = 5
+            ini_t = group[delta_num]['timestamp']
+            for i in range(delta_num, len(group) - delta_num):
+                if group[i]['v'] <= 1.0:
+                    targetV[group[i]['timestamp'] - ini_t] = (group[i]['targetV'])
+            return targetV
+
+    @ staticmethod
+    def get_v_t_values(group: List[dict], title):
+        """
+            得到所有的t、a、v值
+        :param group: 相当于data[title]，也就是上面的[{'timestamp': t1, 'x': x1, 'y': y1, 'a': a1, 'v': v1}, {第二帧信息}...]
+        :return: t坐标的列表， a坐标的列表，v坐标的列表
+        """
+        t_values = []
+        v_values = []
+
+        def __get_relative_time(index):
+            # 获取相对第一帧的时间
+            return group[index]['timestamp'] - group[0]['timestamp']
+
+        def __get_v(index):
+            return group[index]['v']
+
+        delta_num = 5
+        for i in range(delta_num, len(group) - delta_num):
+            # 得到当前点的速度
+            cur_v = __get_v(i)
+            if cur_v > 1.0:
+                print(f'{title}组的速度采样有误,数值为{cur_v},已去除该点')
+                continue
+            else:
+                v_values.append(cur_v)
+
+            # 得到相对第一帧的时间
+            relative_time = __get_relative_time(i)
+            t_values.append(relative_time)
+
+        return v_values, t_values
+
+    @ staticmethod
     def get_t_v_a_values(group: List[dict], title):
         """
             得到所有的t、a、v值
