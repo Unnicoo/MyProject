@@ -8,11 +8,24 @@ from draw_lines.Utils.deal_with_data import DataProcessing as DP
 
 mpl.rcParams['font.sans-serif'] = ['MicroSoft YaHei']
 
+data = data_utils.data
+titles = data_utils.titles
+acc_t = data_utils.acc_t_ranges
+
 omega_n = 4.75593398699244
 zeta = 1.0577697080793695
 
 
 def overdamped_second_order_response(t, omega_n, zeta, ini_v, target_v):
+    """
+        速度时间关系
+    :param t: 单位是s;可以是时刻，也可以是时间序列，影响得到的结果是数值还是数组
+    :param omega_n: 自然频率
+    :param zeta: 阻尼比
+    :param ini_v: 初始速度（运动过程中最初的速度数值，不会随着时间变化）
+    :param target_v: 给定的目标速度
+    :return: 给定目标速度下，该时间点的速度值
+    """
     sigma = omega_n * zeta
     sqrt_part = np.sqrt(sigma ** 2 - omega_n ** 2)
 
@@ -33,45 +46,38 @@ def overdamped_second_order_response(t, omega_n, zeta, ini_v, target_v):
     return response
 
 
-data = data_utils.data
-titles = data_utils.titles
-acc_t = data_utils.acc_t_ranges
+if __name__ == '__main__':
+    for title in titles:
+        group = data[title]
+        v_values, t_values = DP.get_v_t_values(group, title)
+        ini_v = v_values[0]
 
-for title in titles:
-    group = data[title]
-    v_values, t_values = DP.get_v_t_values(group, title)
-    v_initial = v_values[0]
-    print(v_initial)
+        targetV = DP.get_targetV(group)
 
-    targetV = DP.get_targetV(group)
+        # 得到时间序列
+        time_steps = np.array(list(targetV.keys()))
 
-    # 预期目标速度曲线（每隔11ms给定一个新的预期目标速度）
-    time_steps = np.array(list(targetV.keys()))
+        # 获取传入的目标速度序列
+        v_targets = list(targetV.values())
 
-    # 获取传入的目标速度序列
-    v_targets = list(targetV.values())
+        # 计算实际速度曲线
+        pred_v = []
+        for i, t in enumerate(time_steps / 1000):
+            print(i, t)
+            v_target = v_targets[i]
+            v_t = ini_v + overdamped_second_order_response(t, omega_n, zeta, ini_v, v_target)
+            pred_v.append(v_t)
 
-    # print(len(time_steps))
-    # print(len(v_targets))
-    # print(time_steps)
+        # 绘制v-t图
+        t_values, v_values, a_values = DP.get_t_v_a_values(group, title)
+        t = np.array(t_values)
+        v = np.array(v_values)
 
-    # 计算实际速度曲线
-    pred_v = []
-    for i, t in enumerate(time_steps / 1000):
-        v_target = v_targets[i]
-        v_t = v_initial + overdamped_second_order_response(t, omega_n, zeta, v_initial, v_target)
-        pred_v.append(v_t)
-
-    # 绘制v-t图
-    t_values, v_values, a_values = DP.get_t_v_a_values(group, title)
-    t = np.array(t_values)
-    v = np.array(v_values)
-
-    plt.scatter(t, v, alpha=0.2, label='实际曲线')
-    plt.scatter(time_steps, pred_v, color='red', alpha=0.2, label='预期曲线')
-    plt.xlabel('Time (ms)')
-    plt.ylabel('Velocity')
-    plt.title(title)
-    plt.grid(True)
-    plt.legend()
-    plt.show()
+        plt.scatter(t, v, alpha=0.2, label='实际曲线')
+        plt.scatter(time_steps, pred_v, color='red', alpha=0.2, label='预期曲线')
+        plt.xlabel('Time (ms)')
+        plt.ylabel('Velocity')
+        plt.title(title)
+        plt.grid(True)
+        plt.legend()
+        plt.show()

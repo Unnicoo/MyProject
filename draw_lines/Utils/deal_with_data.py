@@ -34,9 +34,8 @@ class DataProcessing:
             print("there's no targetV")
         else:
             targetV = {}
-            delta_num = 5
-            ini_t = group[delta_num]['timestamp']
-            for i in range(delta_num, len(group) - delta_num):
+            ini_t = group[0]['timestamp']
+            for i in range(len(group)):
                 if group[i]['v'] <= 1.0:
                     targetV[group[i]['timestamp'] - ini_t] = (group[i]['targetV'])
             return targetV
@@ -58,8 +57,7 @@ class DataProcessing:
         def __get_v(index):
             return group[index]['v']
 
-        delta_num = 5
-        for i in range(delta_num, len(group) - delta_num):
+        for i in range(len(group)):
             # 得到当前点的速度
             cur_v = __get_v(i)
             if cur_v > 1.0:
