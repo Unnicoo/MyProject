@@ -88,7 +88,7 @@ class GenerateImage:
         t_values, v_values, _ = DataProcessing.get_t_v_a_values(group, title)
         t_values = np.array(t_values)
         t_values -= t_values[0]
-        print(t_values[0])
+        # print(t_values[0])
 
         GenerateImage.draw_v_t_image_with_data(t_values, v_values, title, alpha=alpha)
 

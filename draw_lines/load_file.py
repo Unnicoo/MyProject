@@ -85,7 +85,8 @@ class DataUtils:
                     elif group[i]['targetV'] > 0.8:                                        # noqa
                         print(f'目标速度采样有误,数值为{group[i]["targetV"]},已去除该点')       # noqa
                         group.pop(i)
-                    i += 1
+                    else:
+                        i += 1
         return data
     # 文件格式：data = {'v1-v2': [{'timestamp': t1, 'x': x1, 'y': y1, 'a': a1, 'v': v1}, {第二帧信息}...], {'v2-v3'}: [...]}
     # print(data)
