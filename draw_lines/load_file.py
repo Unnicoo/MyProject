@@ -75,16 +75,16 @@ class DataUtils:
                             data_dict[_key] = float(_value)
 
                     info[i] = data_dict  # noqa
-        for title, group in data.items():
-            i = 0
-            while i < len(group):
-                if APPLY_FILTER:
+        if APPLY_FILTER:
+            for title, group in data.items():
+                i = 0
+                while i < len(group):
                     if group[i]['v'] > 0.8:                                                # noqa
-                        group.pop(i)
                         print(f'速度采样有误,数值为{group[i]["v"]},已去除该点')                # noqa
-                    elif group[i]['targetV'] > 0.8:                                        # noqa
                         group.pop(i)
+                    elif group[i]['targetV'] > 0.8:                                        # noqa
                         print(f'目标速度采样有误,数值为{group[i]["targetV"]},已去除该点')       # noqa
+                        group.pop(i)
                     i += 1
         return data
     # 文件格式：data = {'v1-v2': [{'timestamp': t1, 'x': x1, 'y': y1, 'a': a1, 'v': v1}, {第二帧信息}...], {'v2-v3'}: [...]}
