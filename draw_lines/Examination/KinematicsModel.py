@@ -63,7 +63,6 @@ if __name__ == '__main__':
         # 计算实际速度曲线
         pred_v = []
         for i, t in enumerate(time_steps / 1000):
-            print(i, t)
             v_target = v_targets[i]
             v_t = ini_v + overdamped_second_order_response(t, omega_n, zeta, ini_v, v_target)
             pred_v.append(v_t)

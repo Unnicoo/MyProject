@@ -325,9 +325,9 @@ if __name__ == '__main__':
     plt.show()
 
     # 绘制 v-t 图
-    print(data_utils.titles)
+    # print(data_utils.titles)
     title = titles[0]
-    print(f'title: {title}')
+    # print(f'title: {title}')
     GenerateImage.draw_v_t_image(title, alpha=0.5)
 
     pass

@@ -36,8 +36,7 @@ class DataProcessing:
             targetV = {}
             ini_t = group[0]['timestamp']
             for i in range(len(group)):
-                if group[i]['v'] <= 1.0:
-                    targetV[group[i]['timestamp'] - ini_t] = (group[i]['targetV'])
+                targetV[group[i]['timestamp'] - ini_t] = (group[i]['targetV'])
             return targetV
 
     @ staticmethod
@@ -60,11 +59,7 @@ class DataProcessing:
         for i in range(len(group)):
             # 得到当前点的速度
             cur_v = __get_v(i)
-            if cur_v > 1.0:
-                print(f'{title}组的速度采样有误,数值为{cur_v},已去除该点')
-                continue
-            else:
-                v_values.append(cur_v)
+            v_values.append(cur_v)
 
             # 得到相对第一帧的时间
             relative_time = __get_relative_time(i)
@@ -94,11 +89,7 @@ class DataProcessing:
         for i in range(delta_num, len(group)-delta_num):
             # 得到当前点的速度
             cur_v = __get_v(i)
-            if cur_v > 1.0:
-                print(f'{title}组的速度采样有误,数值为{cur_v},已去除该点')
-                continue
-            else:
-                v_values.append(cur_v)
+            v_values.append(cur_v)
 
             # 得到相对第一帧的时间
             relative_time = __get_relative_time(i)

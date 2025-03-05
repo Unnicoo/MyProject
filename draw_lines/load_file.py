@@ -18,8 +18,12 @@ file_names = [f for f in os.listdir(data_path) if f.endswith('.txt')]
 #     '0.1~0.6正向.txt'                       # index:6
 #     'sin曲线-0.55~0.55.txt.txt'                 # index:7
 #     'sin曲线0.35~0.55.txt.txt'                  # index:8
+#     'telecontrol1.txt'                      # index:9
+#     'telecontrol2.txt'                      # index:10
 # ]
-DEFAULT_INDEX = 8
+# print(file_names)
+DEFAULT_INDEX = 9
+APPLY_FILTER = True
 
 
 class DataUtils:
@@ -71,6 +75,17 @@ class DataUtils:
                             data_dict[_key] = float(_value)
 
                     info[i] = data_dict  # noqa
+        for title, group in data.items():
+            i = 0
+            while i < len(group):
+                if APPLY_FILTER:
+                    if group[i]['v'] > 0.8:                                                # noqa
+                        group.pop(i)
+                        print(f'速度采样有误,数值为{group[i]["v"]},已去除该点')                # noqa
+                    elif group[i]['targetV'] > 0.8:                                        # noqa
+                        group.pop(i)
+                        print(f'目标速度采样有误,数值为{group[i]["targetV"]},已去除该点')       # noqa
+                    i += 1
         return data
     # 文件格式：data = {'v1-v2': [{'timestamp': t1, 'x': x1, 'y': y1, 'a': a1, 'v': v1}, {第二帧信息}...], {'v2-v3'}: [...]}
     # print(data)
