@@ -12,17 +12,20 @@ file_names = [f for f in os.listdir(data_path) if f.endswith('.txt')]
 #     '-0.05~-0.55以及-0.1~-0.5倒车.txt',      # index:0
 #     '-0.05~-0.55倒车.txt',                  # index:1
 #     '-0.1~-0.5倒车.txt',                    # index:2
-#     '0.05~0.55正向.txt',                    # index:3
-#     '0.05~0.55正向两组.txt',                 # index:4
-#     '0.1~0.5正向两组.txt',                   # index:5
-#     '0.1~0.6正向.txt'                       # index:6
-#     'sin曲线-0.55~0.55.txt.txt'                 # index:7
-#     'sin曲线0.35~0.55.txt.txt'                  # index:8
-#     'telecontrol1.txt'                      # index:9
-#     'telecontrol2.txt'                      # index:10
+#     '-0.55~0.55_10度.txt',                  # index:3
+#     '-0.55~0.55_18度.txt',                  # index:4
+#     '0.05~0.55正向.txt',                    # index:5
+#     '0.05~0.55正向两组.txt',                 # index:6
+#     '0.1~0.5正向两组.txt',                   # index:7
+#     '0.1~0.6正向.txt'                       # index:8
+#     'sin曲线-0.55~0.55.txt.txt'             # index:9
+#     'sin曲线0.35~0.55.txt.txt'              # index:10
+#     'telecontrol1.txt'                      # index:11
+#     'telecontrol2.txt'                      # index:12
+#     'telecontrol3.txt'                      # index:13
 # ]
 # print(file_names)
-DEFAULT_INDEX = 9
+DEFAULT_INDEX = 12
 APPLY_FILTER = True
 
 

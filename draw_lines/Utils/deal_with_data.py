@@ -70,7 +70,7 @@ class DataProcessing:
     @ staticmethod
     def get_t_v_a_values(group: List[dict], title):
         """
-            得到所有的t、a、v值
+            得到所有的t、v、a值
         :param group: 相当于data[title]，也就是上面的[{'timestamp': t1, 'x': x1, 'y': y1, 'a': a1, 'v': v1}, {第二帧信息}...]
         :return: t坐标的列表， a坐标的列表，v坐标的列表
         """

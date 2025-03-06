@@ -330,4 +330,19 @@ if __name__ == '__main__':
     # print(f'title: {title}')
     GenerateImage.draw_v_t_image(title, alpha=0.5)
 
+    title = titles[0]
+    group = data[title]
+    v_values, t_values= DataProcessing.get_v_t_values(group, title)
+    targetV = DataProcessing.get_targetV(group)
+    plt.scatter(t_values, list(targetV.values()))
+    group = data[title][:]
+    t_values, v_values, _ = DataProcessing.get_t_v_a_values(group, title)
+    t_values = np.array(t_values)
+    t_values -= t_values[0]
+    plt.scatter(t_values, v_values, alpha=0.2)
+    plt.xlabel(t_values)
+    plt.ylabel(v_values)
+    plt.show()
+
+
     pass

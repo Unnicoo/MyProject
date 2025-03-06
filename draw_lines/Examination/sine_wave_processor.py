@@ -41,6 +41,7 @@ def overdamped_second_order_response(t, omega_n, zeta, ini_v, target_v):
     term2 = A2 * np.exp(-sqrt_part * t)
 
     response = 1 - np.exp(-sigma * t) * (term1 + term2)
+    # print(response)
     response *= (target_v - ini_v)
 
     return response
